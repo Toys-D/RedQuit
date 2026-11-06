@@ -1,0 +1,285 @@
+import AppKit
+import ApplicationServices
+import RedQuitCore
+
+/// Следит, действительно ли окно закрылось после нажатия красной кнопки.
+///
+/// Порядок:
+/// 1. Нажатие на красную кнопку — сразу подписываемся на уничтожение окна (AXObserver),
+///    чтобы не пропустить уведомление.
+/// 2. Кнопку мыши отпустили вне красной кнопки — закрытие отменено, забываем.
+/// 3. Отпустили на кнопке — ждём: уведомление об уничтожении окна или исчезновение окна
+///    из списка окон программы (опрос — для программ, которые прячут окно вместо уничтожения).
+/// 4. Если программа показала диалог «Сохранить изменения?», ждём, пока он открыт.
+///    Диалог закрылся, а окно осталось — значит, нажали «Отмена»: ничего не делаем.
+@MainActor
+final class WindowCloseWatcher {
+    enum Result {
+        /// Окно закрылось. `destroyed` — окно уничтожено (а не спрятано программой).
+        case closed(destroyed: Bool, detail: String)
+        case cancelled(String)
+    }
+
+    enum Timing {
+        /// Как часто проверять окно.
+        static let poll: TimeInterval = 0.15
+        /// Сколько ждать закрытия, если программа не показала диалог.
+        static let closeWait: TimeInterval = 2
+        /// Сколько ждать, если программа не отвечает на запросы AX (занята).
+        static let busyWait: TimeInterval = 10
+        /// Сколько максимум ждать решения в диалоге «Сохранить?».
+        static let dialogWait: TimeInterval = 600
+        /// Сколько ждать закрытия окна после исчезновения диалога («Не сохранять» → окно закрывается).
+        static let dialogGrace: TimeInterval = 1
+    }
+
+    var onResult: (@MainActor (CloseButtonHit, Result) -> Void)?
+
+    /// Нажатие, для которого ещё не было отпускания.
+    private var pressed: CloseWatch?
+    /// Нажатия, засчитанные как клик по красной кнопке: ждём закрытия окна.
+    private var waiting: [ObjectIdentifier: CloseWatch] = [:]
+
+    func mouseDown(on hit: CloseButtonHit) {
+        if let old = pressed {
+            finish(old, .cancelled("новое нажатие раньше, чем отпустили предыдущее"))
+        }
+        let watch = CloseWatch(hit: hit)
+        watch.onDestroyed = { [weak self, weak watch] in
+            guard let self, let watch else { return }
+            self.windowDestroyed(watch)
+        }
+        watch.startObserving()
+        pressed = watch
+    }
+
+    /// Нажатие пришлось не на красную кнопку.
+    func mouseDownElsewhere() {
+        if let old = pressed {
+            finish(old, .cancelled("отпускание предыдущего нажатия не получено"))
+        }
+    }
+
+    func mouseUp(at point: CGPoint) {
+        guard let watch = pressed else { return }
+        pressed = nil
+        guard watch.hit.releaseZone.contains(point) else {
+            finish(watch, .cancelled("кнопку мыши отпустили за пределами красной кнопки — закрытие отменено"))
+            return
+        }
+        Log.watch.info("«\(watch.hit.appName, privacy: .public)»: отпущено на красной кнопке — ждём закрытия окна")
+        waiting[ObjectIdentifier(watch)] = watch
+        watch.arm()
+        watch.startPolling { [weak self, weak watch] in
+            guard let self, let watch else { return }
+            self.tick(watch)
+        }
+    }
+
+    func cancelAll(reason: String) {
+        if let pressed { finish(pressed, .cancelled(reason)) }
+        for watch in Array(waiting.values) { finish(watch, .cancelled(reason)) }
+    }
+
+    // MARK: - Внутреннее
+
+    private func windowDestroyed(_ watch: CloseWatch) {
+        if watch === pressed {
+            finish(watch, .cancelled("окно исчезло ещё до отпускания кнопки мыши"))
+            return
+        }
+        guard waiting[ObjectIdentifier(watch)] != nil else { return }
+        finish(watch, .closed(destroyed: true, detail: "уведомление AX: окно уничтожено"))
+    }
+
+    private func tick(_ watch: CloseWatch) {
+        guard waiting[ObjectIdentifier(watch)] != nil else { return }
+        let name = watch.hit.appName
+
+        if watch.hit.app.isTerminated {
+            finish(watch, .cancelled("программа завершилась сама"))
+            return
+        }
+
+        let now = Date()
+        switch watch.probe() {
+        case .destroyed:
+            finish(watch, .closed(destroyed: true, detail: "окно больше не существует"))
+            return
+        case .hidden:
+            finish(watch, .closed(destroyed: false, detail: "программа убрала окно с экрана"))
+            return
+        case .present(let hasDialog):
+            if hasDialog {
+                if watch.dialogSeenAt == nil {
+                    Log.watch.notice("«\(name, privacy: .public)»: программа показала диалог — ждём вашего решения")
+                    watch.dialogSeenAt = now
+                }
+                watch.dialogGoneAt = nil
+            } else if watch.dialogSeenAt != nil {
+                if let gone = watch.dialogGoneAt {
+                    if now.timeIntervalSince(gone) > Timing.dialogGrace {
+                        finish(watch, .cancelled("диалог закрылся, а окно осталось — похоже, нажали «Отмена»"))
+                        return
+                    }
+                } else {
+                    watch.dialogGoneAt = now
+                }
+            }
+        case .elsewhere:
+            break
+        case .unresponsive:
+            if !watch.sawBusy {
+                Log.watch.info("«\(name, privacy: .public)»: программа не отвечает на запросы AX — подождём подольше")
+            }
+            watch.sawBusy = true
+        }
+
+        let limit: TimeInterval
+        let reason: String
+        if watch.dialogSeenAt != nil {
+            limit = Timing.dialogWait
+            reason = "диалог открыт дольше \(Int(limit / 60)) минут — перестаём ждать"
+        } else if watch.sawBusy {
+            limit = Timing.busyWait
+            reason = "окно не закрылось за \(Int(limit)) с, программа не отвечает — ничего не делаем"
+        } else {
+            limit = Timing.closeWait
+            reason = "окно не закрылось за \(Int(limit)) с — видимо, программа не стала его закрывать"
+        }
+        if watch.elapsedSinceArm > limit {
+            finish(watch, .cancelled(reason))
+        }
+    }
+
+    private func finish(_ watch: CloseWatch, _ result: Result) {
+        watch.stop()
+        waiting[ObjectIdentifier(watch)] = nil
+        if pressed === watch { pressed = nil }
+        onResult?(watch.hit, result)
+    }
+}
+
+/// Одно наблюдение за окном.
+@MainActor
+final class CloseWatch {
+    enum Probe {
+        /// Окно уничтожено.
+        case destroyed
+        /// Окно существует, но программа убрала его с экрана (закрыла без уничтожения).
+        case hidden
+        /// Окно на месте; `hasDialog` — к нему прикреплён лист или появился диалог.
+        case present(hasDialog: Bool)
+        /// Окно пропало из списка AX, но оконный сервер видит его на другом рабочем столе.
+        case elsewhere
+        /// Программа не ответила на запрос AX.
+        case unresponsive
+    }
+
+    let hit: CloseButtonHit
+    var onDestroyed: (@MainActor () -> Void)?
+    var dialogSeenAt: Date?
+    var dialogGoneAt: Date?
+    var sawBusy = false
+
+    private var armedAt: Date?
+    private var observer: AXObserver?
+    private var timer: Timer?
+    private var preexistingDialogs: [AXUIElement] = []
+
+    init(hit: CloseButtonHit) {
+        self.hit = hit
+    }
+
+    var elapsedSinceArm: TimeInterval {
+        armedAt.map { Date().timeIntervalSince($0) } ?? 0
+    }
+
+    /// Подписка на уведомление «окно уничтожено».
+    func startObserving() {
+        var created: AXObserver?
+        let error = AXObserverCreate(hit.pid, { _, _, notification, refcon in
+            guard let refcon else { return }
+            let watch = Unmanaged<CloseWatch>.fromOpaque(refcon).takeUnretainedValue()
+            let name = notification as String
+            MainActor.assumeIsolated {
+                if name == kAXUIElementDestroyedNotification {
+                    watch.onDestroyed?()
+                }
+            }
+        }, &created)
+        guard error == .success, let created else {
+            Log.watch.info("AXObserver не создан (AXError \(error.rawValue)) — будем только опрашивать окно")
+            return
+        }
+        let refcon = Unmanaged.passUnretained(self).toOpaque()
+        let addError = AXObserverAddNotification(created, hit.window, kAXUIElementDestroyedNotification as CFString, refcon)
+        if addError != .success {
+            Log.watch.info("Подписка на уничтожение окна не удалась (AXError \(addError.rawValue)) — будем только опрашивать окно")
+        }
+        // Общие режимы цикла: уведомление придёт, даже пока открыто меню RedQuit.
+        CFRunLoopAddSource(CFRunLoopGetMain(), AXObserverGetRunLoopSource(created), .commonModes)
+        observer = created
+    }
+
+    /// Нажатие засчитано: запоминаем время и уже открытые диалоги программы.
+    func arm() {
+        armedAt = Date()
+        let app = AXUIElementCreateApplication(hit.pid)
+        preexistingDialogs = (AX.elements(app, kAXWindowsAttribute).list ?? []).filter {
+            WindowSubrole.dialogs.contains(AX.string($0, kAXSubroleAttribute) ?? "")
+        }
+    }
+
+    func startPolling(_ handler: @escaping @MainActor @Sendable () -> Void) {
+        let timer = Timer(timeInterval: WindowCloseWatcher.Timing.poll, repeats: true) { _ in
+            MainActor.assumeIsolated { handler() }
+        }
+        RunLoop.main.add(timer, forMode: .common)
+        self.timer = timer
+    }
+
+    func stop() {
+        timer?.invalidate()
+        timer = nil
+        if let observer {
+            AXObserverRemoveNotification(observer, hit.window, kAXUIElementDestroyedNotification as CFString)
+            CFRunLoopRemoveSource(CFRunLoopGetMain(), AXObserverGetRunLoopSource(observer), .commonModes)
+        }
+        observer = nil
+        onDestroyed = nil
+    }
+
+    func probe() -> Probe {
+        switch AX.value(hit.window, kAXRoleAttribute).error {
+        case .success: break
+        case .invalidUIElement: return .destroyed
+        case .cannotComplete: return .unresponsive
+        default: return .elsewhere
+        }
+
+        let app = AXUIElementCreateApplication(hit.pid)
+        let (windows, listError) = AX.elements(app, kAXWindowsAttribute)
+        guard let windows else {
+            return listError == .cannotComplete ? .unresponsive : .elsewhere
+        }
+
+        if !windows.contains(where: { CFEqual($0, hit.window) }) {
+            // Окна нет среди окон текущего рабочего стола. Если оконный сервер всё ещё видит
+            // его на каком-то рабочем столе — окно не закрыто (например, переключили рабочий стол).
+            if let id = hit.windowID, let visible = WindowInventory.windowNumbersOnAllSpaces(), visible.contains(id) {
+                return .elsewhere
+            }
+            return .hidden
+        }
+
+        let children = AX.elements(hit.window, kAXChildrenAttribute).list ?? []
+        let hasSheet = children.contains { AX.string($0, kAXRoleAttribute) == kAXSheetRole }
+        let hasNewDialog = windows.contains { window in
+            !CFEqual(window, hit.window)
+                && WindowSubrole.dialogs.contains(AX.string(window, kAXSubroleAttribute) ?? "")
+                && !preexistingDialogs.contains { CFEqual($0, window) }
+        }
+        return .present(hasDialog: hasSheet || hasNewDialog)
+    }
+}
