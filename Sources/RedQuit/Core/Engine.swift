@@ -95,7 +95,7 @@ final class Engine {
 
     // MARK: - Решение
 
-    private func decide(_ hit: CloseButtonHit, windowDestroyed: Bool) {
+    private func decide(_ hit: CloseButtonHit, windowDestroyed: Bool, attempt: Int = 0) {
         let name = hit.appName
         guard isActive, prefs.isEnabled else {
             Log.decision.notice("«\(name, privacy: .public)»: RedQuit на паузе — ничего не делаем")
@@ -140,6 +140,19 @@ final class Engine {
             remainingAX: remaining,
             otherWindows: others
         )
+        // Окна видит только оконный сервер, а AX — нет. Это может быть настоящее окно на другом
+        // рабочем столе, а может быть временное окно анимации (например, выход из полноэкранного
+        // режима создаёт окно во весь экран). Временное быстро исчезает — перепроверяем.
+        if !decision.shouldQuit, !others.isEmpty, attempt < Self.recheckDelays.count {
+            let delay = Self.recheckDelays[attempt]
+            Log.decision.info("«\(name, privacy: .public)»: окна видит только оконный сервер — перепроверим через \(delay.components.seconds) с")
+            Task { @MainActor [weak self] in
+                try? await Task.sleep(for: delay)
+                self?.decide(hit, windowDestroyed: windowDestroyed, attempt: attempt + 1)
+            }
+            return
+        }
+
         switch decision {
         case .keep(let reason):
             Log.decision.notice("«\(name, privacy: .public)» продолжает работать: \(reason, privacy: .public)")
@@ -147,6 +160,9 @@ final class Engine {
             terminate(hit, reason: reason)
         }
     }
+
+    /// Паузы перед повторными проверками, когда окна видит только оконный сервер.
+    static let recheckDelays: [Duration] = [.seconds(1), .seconds(1)]
 
     private func terminate(_ hit: CloseButtonHit, reason: String) {
         guard !quitting.contains(hit.pid) else { return }

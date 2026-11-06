@@ -71,6 +71,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 view: SettingsView(prefs: prefs, permissions: permissions),
                 resizable: true
             )
+            settingsWindow?.setContentSize(NSSize(width: 520, height: 640))
+            settingsWindow?.center()
         }
         present(settingsWindow)
     }

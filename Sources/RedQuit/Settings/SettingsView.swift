@@ -108,6 +108,8 @@ struct SettingsView: View {
                 Text("На эти программы RedQuit не действует. Фоновые программы без значка в Dock (агенты, утилиты строки меню) RedQuit не трогает никогда.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.leading)
+                    .frame(maxWidth: .infinity, alignment: .leading)
             }
 
             Section("Журнал") {
