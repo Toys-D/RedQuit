@@ -52,6 +52,14 @@ struct QuitDeciderTests {
         #expect(d.reason.contains("свёрнут"))
     }
 
+    @Test("«Последнее окно»: свёрнутое окно с другой подролью → не завершаем")
+    func lastWindowKeepsMinimizedWithOtherSubrole() {
+        let oddMinimized = AXWindowInfo(subrole: nil, isMinimized: true)
+        let d = QuitDecider.decide(mode: .lastWindow, closedWindowSubrole: WindowSubrole.standard,
+                                   remainingAX: [oddMinimized], otherWindows: [])
+        #expect(!d.shouldQuit)
+    }
+
     @Test("«Последнее окно»: окон не осталось → завершаем")
     func lastWindowQuitsWhenNothingRemains() {
         let d = QuitDecider.decide(mode: .lastWindow, closedWindowSubrole: WindowSubrole.standard,

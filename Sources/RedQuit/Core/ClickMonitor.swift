@@ -1,16 +1,18 @@
 import AppKit
 import RedQuitCore
 
-/// Слушает нажатия левой кнопки мыши во всей системе.
+/// Слушает мышь во всей системе: нажатие и отпускание левой кнопки, движение курсора.
 ///
 /// Используется глобальный монитор NSEvent: он получает только КОПИИ событий, уже
 /// доставленных другим программам, и по своей природе не может задержать, изменить
 /// или отменить событие.
 @MainActor
 final class ClickMonitor {
-    /// Точка в глобальных координатах Quartz/AX (начало — левый верхний угол основного экрана).
-    var onMouseDown: (@MainActor (CGPoint) -> Void)?
+    /// Точка — в глобальных координатах Quartz/AX (начало — левый верхний угол основного
+    /// экрана); время — `NSEvent.timestamp` (секунды от запуска системы).
+    var onMouseDown: (@MainActor (CGPoint, TimeInterval) -> Void)?
     var onMouseUp: (@MainActor (CGPoint) -> Void)?
+    var onMouseMoved: (@MainActor (CGPoint) -> Void)?
 
     private var token: Any?
 
@@ -18,14 +20,15 @@ final class ClickMonitor {
 
     func start() {
         guard token == nil else { return }
-        token = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDown, .leftMouseUp]) { [weak self] event in
+        token = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDown, .leftMouseUp, .mouseMoved]) { [weak self] event in
             MainActor.assumeIsolated {
                 guard let self else { return }
                 let point = Self.quartzLocation(of: event)
-                if event.type == .leftMouseDown {
-                    self.onMouseDown?(point)
-                } else {
-                    self.onMouseUp?(point)
+                switch event.type {
+                case .leftMouseDown: self.onMouseDown?(point, event.timestamp)
+                case .leftMouseUp: self.onMouseUp?(point)
+                case .mouseMoved: self.onMouseMoved?(point)
+                default: break
                 }
             }
         }

@@ -12,6 +12,7 @@ final class Engine {
     private let monitor = ClickMonitor()
     private let detector = CloseButtonDetector()
     private let watcher = WindowCloseWatcher()
+    private lazy var hover = HoverTracker(detector: detector)
     private let ownBundleID = Bundle.main.bundleIdentifier
     /// Программы, которым уже отправлен запрос на завершение.
     private var quitting: Set<pid_t> = []
@@ -20,8 +21,9 @@ final class Engine {
 
     init(prefs: Preferences) {
         self.prefs = prefs
-        monitor.onMouseDown = { [weak self] point in self?.mouseDown(at: point) }
+        monitor.onMouseDown = { [weak self] point, timestamp in self?.mouseDown(at: point, timestamp: timestamp) }
         monitor.onMouseUp = { [weak self] point in self?.watcher.mouseUp(at: point) }
+        monitor.onMouseMoved = { [weak self] point in self?.hover.mouseMoved(to: point) }
         watcher.onResult = { [weak self] hit, result in self?.handle(hit, result) }
     }
 
@@ -33,6 +35,7 @@ final class Engine {
             Log.app.notice("Слежение за красными кнопками включено (режим «\(self.prefs.mode.title, privacy: .public)»)")
         } else {
             monitor.stop()
+            hover.reset()
             watcher.cancelAll(reason: "слежение выключено")
             Log.app.notice("Слежение за красными кнопками выключено")
         }
@@ -40,8 +43,15 @@ final class Engine {
 
     // MARK: - Клик
 
-    private func mouseDown(at point: CGPoint) {
-        guard let hit = detector.hitTest(at: point) else {
+    private func mouseDown(at point: CGPoint, timestamp: TimeInterval) {
+        Log.click.debug("Нажатие кнопки мыши в (\(point.x, format: .fixed(precision: 0)), \(point.y, format: .fixed(precision: 0)))")
+        var found = detector.hitTest(at: point)
+        if found == nil, let remembered = hover.hit(for: point, at: timestamp) {
+            // Быстрый клик: окно уже закрылось, но курсор перед этим стоял на его красной кнопке.
+            Log.click.info("«\(remembered.appName, privacy: .public)»: окно закрылось быстрее проверки — берём красную кнопку, найденную при наведении")
+            found = remembered
+        }
+        guard let hit = found else {
             watcher.mouseDownElsewhere()
             return
         }
@@ -107,11 +117,13 @@ final class Engine {
         if mode == .lastWindow {
             remaining = WindowInventory.axWindows(pid: hit.pid, excluding: hit.window)
             if let remaining {
-                let standard = remaining.filter(\.isStandard).count
-                Log.decision.info("«\(name, privacy: .public)»: окон по данным AX: \(remaining.count), обычных: \(standard)")
+                let details = remaining
+                    .map { "\($0.subrole ?? "без подроли")\($0.isMinimized ? " (свёрнуто)" : "")" }
+                    .joined(separator: ", ")
+                Log.decision.info("«\(name, privacy: .public)»: окон по данным AX: \(remaining.count) [\(details, privacy: .public)]")
             }
-            let hasStandard = remaining?.contains(where: \.isStandard) ?? false
-            if remaining != nil, !hasStandard {
+            let hasOpen = remaining?.contains(where: \.countsAsOpen) ?? false
+            if remaining != nil, !hasOpen {
                 // AX видит только текущий рабочий стол — спрашиваем оконный сервер.
                 // Уничтоженное окно исключаем на случай, если оконный сервер ещё не успел его убрать.
                 let exclude: Set<UInt32> = windowDestroyed ? Set(hit.windowID.map { [$0] } ?? []) : []

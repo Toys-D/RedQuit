@@ -41,10 +41,10 @@ public enum QuitDecider {
             guard let remainingAX else {
                 return .keep(reason: "не удалось получить список окон программы — на всякий случай не завершаем")
             }
-            let standard = remainingAX.filter(\.isStandard)
-            if !standard.isEmpty {
-                let minimized = standard.filter(\.isMinimized).count
-                var reason = "осталось обычных окон: \(standard.count)"
+            let open = remainingAX.filter(\.countsAsOpen)
+            if !open.isEmpty {
+                let minimized = open.filter(\.isMinimized).count
+                var reason = "осталось окон: \(open.count)"
                 if minimized > 0 { reason += ", из них свёрнутых: \(minimized)" }
                 return .keep(reason: reason)
             }

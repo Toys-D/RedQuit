@@ -51,7 +51,11 @@ final class CloseButtonDetector {
             }
             return nil
         }
-        guard AX.string(element, kAXSubroleAttribute) == kAXCloseButtonSubrole else { return nil }
+        let subrole = AX.string(element, kAXSubroleAttribute)
+        guard subrole == kAXCloseButtonSubrole else {
+            Log.click.debug("Точка (\(point.x, format: .fixed(precision: 0)), \(point.y, format: .fixed(precision: 0))): под курсором \(AX.string(element, kAXRoleAttribute) ?? "?", privacy: .public)/\(subrole ?? "-", privacy: .public), \(elapsedMs, format: .fixed(precision: 1)) мс")
+            return nil
+        }
 
         Log.click.debug("Под курсором кнопка закрытия (\(point.x, format: .fixed(precision: 0)), \(point.y, format: .fixed(precision: 0))), поиск занял \(elapsedMs, format: .fixed(precision: 1)) мс")
 

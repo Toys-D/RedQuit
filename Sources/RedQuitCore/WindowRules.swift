@@ -35,6 +35,17 @@ public enum WindowRules {
         }
     }
 
+    /// Область кнопок «светофора» от левого верхнего угла окна — с запасом: в окнах
+    /// с панелью инструментов кнопки сдвинуты вправо и вниз.
+    public static let trafficLightZone = CGSize(width: 64, height: 64)
+
+    /// Находится ли точка там, где у окна могут быть красная, жёлтая и зелёная кнопки.
+    public static func isInTrafficLightZone(point: CGPoint, windowBounds: CGRect) -> Bool {
+        let dx = point.x - windowBounds.minX
+        let dy = point.y - windowBounds.minY
+        return dx >= 0 && dx <= trafficLightZone.width && dy >= 0 && dy <= trafficLightZone.height
+    }
+
     /// Номер окна оконного сервера, совпадающего по рамке с окном из AX (рамки в одной
     /// системе координат: начало в левом верхнем углу основного экрана).
     public static func matchWindowID(

@@ -15,6 +15,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "?"
         Log.app.notice("RedQuit \(version, privacy: .public) запущен: \(Bundle.main.bundlePath, privacy: .public)")
 
+        // RedQuit работает без окон. Без этого macOS считает такую программу «простаивающей»
+        // и может тихо завершить её (Automatic Termination).
+        ProcessInfo.processInfo.disableAutomaticTermination("RedQuit следит за красными кнопками")
+
         let menu = StatusMenuController(prefs: prefs, permissions: permissions)
         menu.onOpenSettings = { [weak self] in self?.showSettings() }
         menu.onRequestPermission = { [weak self] in self?.showPermissionWindow() }

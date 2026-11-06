@@ -48,6 +48,16 @@ struct WindowRulesTests {
         #expect(WindowRules.matchWindowID(frame: frame.offsetBy(dx: 50, dy: 0), pid: pid, records: records) == nil)
     }
 
+    @Test("Зона кнопок светофора — левый верхний угол окна")
+    func trafficLightZone() {
+        let window = CGRect(x: 100, y: 200, width: 800, height: 600)
+        #expect(WindowRules.isInTrafficLightZone(point: CGPoint(x: 116, y: 216), windowBounds: window))
+        #expect(WindowRules.isInTrafficLightZone(point: CGPoint(x: 160, y: 260), windowBounds: window))
+        #expect(!WindowRules.isInTrafficLightZone(point: CGPoint(x: 400, y: 216), windowBounds: window))
+        #expect(!WindowRules.isInTrafficLightZone(point: CGPoint(x: 116, y: 400), windowBounds: window))
+        #expect(!WindowRules.isInTrafficLightZone(point: CGPoint(x: 90, y: 216), windowBounds: window))
+    }
+
     @Test("Разбор словаря CGWindowListCopyWindowInfo")
     func parsesDictionary() {
         let dict: [String: Any] = [

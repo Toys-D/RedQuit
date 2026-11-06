@@ -45,11 +45,10 @@ final class WindowCloseWatcher {
             finish(old, .cancelled("новое нажатие раньше, чем отпустили предыдущее"))
         }
         let watch = CloseWatch(hit: hit)
-        watch.onDestroyed = { [weak self, weak watch] in
+        watch.startObserving { [weak self, weak watch] in
             guard let self, let watch else { return }
             self.windowDestroyed(watch)
         }
-        watch.startObserving()
         pressed = watch
     }
 
@@ -65,6 +64,11 @@ final class WindowCloseWatcher {
         pressed = nil
         guard watch.hit.releaseZone.contains(point) else {
             finish(watch, .cancelled("кнопку мыши отпустили за пределами красной кнопки — закрытие отменено"))
+            return
+        }
+        if watch.destroyedWhilePressed {
+            // Быстрый клик: уведомление об уничтожении окна пришло раньше события отпускания.
+            finish(watch, .closed(destroyed: true, detail: "окно закрылось сразу после клика"))
             return
         }
         Log.watch.info("«\(watch.hit.appName, privacy: .public)»: отпущено на красной кнопке — ждём закрытия окна")
@@ -85,7 +89,9 @@ final class WindowCloseWatcher {
 
     private func windowDestroyed(_ watch: CloseWatch) {
         if watch === pressed {
-            finish(watch, .cancelled("окно исчезло ещё до отпускания кнопки мыши"))
+            // Отпускание ещё не обработано. Решим, когда оно придёт: если кнопку отпустили
+            // на красной кнопке — окно закрыто кликом, иначе — чем-то другим.
+            watch.destroyedWhilePressed = true
             return
         }
         guard waiting[ObjectIdentifier(watch)] != nil else { return }
@@ -177,13 +183,13 @@ final class CloseWatch {
     }
 
     let hit: CloseButtonHit
-    var onDestroyed: (@MainActor () -> Void)?
     var dialogSeenAt: Date?
     var dialogGoneAt: Date?
     var sawBusy = false
+    var destroyedWhilePressed = false
 
     private var armedAt: Date?
-    private var observer: AXObserver?
+    private var observer: WindowDestroyObserver?
     private var timer: Timer?
     private var preexistingDialogs: [AXUIElement] = []
 
@@ -195,31 +201,15 @@ final class CloseWatch {
         armedAt.map { Date().timeIntervalSince($0) } ?? 0
     }
 
-    /// Подписка на уведомление «окно уничтожено».
-    func startObserving() {
-        var created: AXObserver?
-        let error = AXObserverCreate(hit.pid, { _, _, notification, refcon in
-            guard let refcon else { return }
-            let watch = Unmanaged<CloseWatch>.fromOpaque(refcon).takeUnretainedValue()
-            let name = notification as String
-            MainActor.assumeIsolated {
-                if name == kAXUIElementDestroyedNotification {
-                    watch.onDestroyed?()
-                }
-            }
-        }, &created)
-        guard error == .success, let created else {
-            Log.watch.info("AXObserver не создан (AXError \(error.rawValue)) — будем только опрашивать окно")
-            return
+    /// Подписка на уведомление «окно уничтожено». Если подписаться не удалось, закрытие
+    /// всё равно заметит опрос окна.
+    func startObserving(onDestroyed: @escaping @MainActor () -> Void) {
+        let observer = WindowDestroyObserver(pid: hit.pid, window: hit.window)
+        observer.onDestroyed = onDestroyed
+        if !observer.isActive {
+            Log.watch.info("«\(self.hit.appName, privacy: .public)»: подписка на закрытие окна недоступна — будем только опрашивать окно")
         }
-        let refcon = Unmanaged.passUnretained(self).toOpaque()
-        let addError = AXObserverAddNotification(created, hit.window, kAXUIElementDestroyedNotification as CFString, refcon)
-        if addError != .success {
-            Log.watch.info("Подписка на уничтожение окна не удалась (AXError \(addError.rawValue)) — будем только опрашивать окно")
-        }
-        // Общие режимы цикла: уведомление придёт, даже пока открыто меню RedQuit.
-        CFRunLoopAddSource(CFRunLoopGetMain(), AXObserverGetRunLoopSource(created), .commonModes)
-        observer = created
+        self.observer = observer
     }
 
     /// Нажатие засчитано: запоминаем время и уже открытые диалоги программы.
@@ -242,12 +232,8 @@ final class CloseWatch {
     func stop() {
         timer?.invalidate()
         timer = nil
-        if let observer {
-            AXObserverRemoveNotification(observer, hit.window, kAXUIElementDestroyedNotification as CFString)
-            CFRunLoopRemoveSource(CFRunLoopGetMain(), AXObserverGetRunLoopSource(observer), .commonModes)
-        }
+        observer?.invalidate()
         observer = nil
-        onDestroyed = nil
     }
 
     func probe() -> Probe {

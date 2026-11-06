@@ -39,6 +39,15 @@ enum WindowInventory {
         return Set(numbers.map(\.uint32Value))
     }
 
+    /// Курсор у левого верхнего угла переднего обычного окна под ним? Дешёвая проверка
+    /// без запросов к самой программе.
+    static func isNearTrafficLights(_ point: CGPoint) -> Bool {
+        guard let front = windowRecords(onScreenOnly: true).first(where: {
+            $0.layer == 0 && $0.alpha > 0.01 && $0.bounds.contains(point)
+        }) else { return false }
+        return WindowRules.isInTrafficLightZone(point: point, windowBounds: front.bounds)
+    }
+
     /// Номер окна оконного сервера для окна AX — сопоставление по рамке.
     static func windowID(pid: pid_t, frame: CGRect) -> UInt32? {
         WindowRules.matchWindowID(frame: frame, pid: pid, records: windowRecords(onScreenOnly: true))

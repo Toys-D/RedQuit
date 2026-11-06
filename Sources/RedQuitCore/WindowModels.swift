@@ -26,6 +26,10 @@ public struct AXWindowInfo: Equatable, Sendable {
     }
 
     public var isStandard: Bool { subrole == WindowSubrole.standard }
+
+    /// Окно считается открытым, если это обычное окно или если оно свёрнуто в Dock
+    /// (у свёрнутого окна AX может отдавать другую подроль).
+    public var countsAsOpen: Bool { isStandard || isMinimized }
 }
 
 /// Окно по данным оконного сервера (`CGWindowListCopyWindowInfo`).
