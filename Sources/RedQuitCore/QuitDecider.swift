@@ -1,4 +1,4 @@
-/// Итог проверки после закрытия окна.
+/// Итог проверки после закрытия окна. Причина — для журнала (на английском).
 public enum QuitDecision: Equatable, Sendable {
     case quit(reason: String)
     case keep(reason: String)
@@ -33,26 +33,26 @@ public enum QuitDecider {
         switch mode {
         case .anyWindow:
             if let subrole = closedWindowSubrole, WindowSubrole.floatingPanels.contains(subrole) {
-                return .keep(reason: "закрыта плавающая панель (\(subrole)), а не обычное окно")
+                return .keep(reason: "a floating panel (\(subrole)) was closed, not a regular window")
             }
-            return .quit(reason: "режим «Любое окно»: окно закрыто красной кнопкой")
+            return .quit(reason: "“Any window” mode: a window was closed with the red button")
 
         case .lastWindow:
             guard let remainingAX else {
-                return .keep(reason: "не удалось получить список окон программы — на всякий случай не завершаем")
+                return .keep(reason: "could not read the app’s window list, keeping it to be safe")
             }
             let open = remainingAX.filter(\.countsAsOpen)
             if !open.isEmpty {
                 let minimized = open.filter(\.isMinimized).count
-                var reason = "осталось окон: \(open.count)"
-                if minimized > 0 { reason += ", из них свёрнутых: \(minimized)" }
+                var reason = "windows still open: \(open.count)"
+                if minimized > 0 { reason += ", minimized: \(minimized)" }
                 return .keep(reason: reason)
             }
             if !otherWindows.isEmpty {
-                return .keep(reason: "на этом рабочем столе окон нет, но система видит ещё окон: \(otherWindows.count) — "
-                    + "вероятно, на другом рабочем столе или в полноэкранном режиме")
+                return .keep(reason: "no windows on this desktop, but the window server sees \(otherWindows.count) more, "
+                    + "probably on another desktop or in full screen")
             }
-            return .quit(reason: "закрыто последнее окно")
+            return .quit(reason: "the last window was closed")
         }
     }
 }

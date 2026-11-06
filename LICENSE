@@ -1,0 +1,59 @@
+RedQuit License
+
+Copyright (c) 2026 Toys for Minds. All rights reserved.
+
+RedQuit is freeware: it costs nothing, and its source code is published so that
+anyone can see exactly what it does. This license explains what you may and may
+not do with RedQuit. "RedQuit" below means the app, its source code, its icon,
+its translations and the other files in this repository.
+
+1. What you may do
+
+   a. Download, install and use RedQuit free of charge, on any number of
+      computers, for personal or commercial purposes (for example, at work).
+
+   b. Share unmodified copies of RedQuit free of charge, as long as the copies
+      include this license and all copyright notices, and name the original
+      project: https://github.com/Toys-D/RedQuit
+
+   c. Read the source code and build it, unchanged, for your own use.
+
+2. What you may not do
+
+   a. Change RedQuit or create derivative works based on it.
+
+   b. Publish or distribute a changed version of RedQuit or a derivative work.
+
+   c. Sell, rent, lease or sublicense RedQuit, charge any fee for it or for
+      access to it, or include it in a paid product, bundle or service.
+
+   d. Remove or change the copyright notices, the name "RedQuit" or the credit
+      to the author, distribute RedQuit under a different name, or present it as
+      your own work.
+
+   Forking this repository on GitHub is possible only to the extent that GitHub's
+   Terms of Service require. A fork does not give you any right to change
+   RedQuit or to distribute a changed version.
+
+3. Feedback
+
+   Bug reports, ideas and corrections to translations are welcome through GitHub
+   issues. By sending them you allow the author to use them in RedQuit under this
+   license.
+
+4. No warranty
+
+   RedQuit is provided "as is", without warranty of any kind, express or implied,
+   including but not limited to the warranties of merchantability, fitness for a
+   particular purpose and non-infringement. In no event shall the author be liable
+   for any claim, damages or other liability, whether in an action of contract,
+   tort or otherwise, arising from, out of or in connection with RedQuit or its
+   use.
+
+5. End of the license
+
+   If you break any of these terms, your rights under this license end
+   automatically.
+
+Translations of this license into other languages are for convenience only.
+This English text is the binding version.

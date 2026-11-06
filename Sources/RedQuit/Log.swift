@@ -1,13 +1,13 @@
 import Foundation
 import os
 
-/// Журнал RedQuit. Смотреть в Console.app: фильтр «подсистема: local.dimas.RedQuit»,
-/// или в терминале: log stream --predicate 'subsystem == "local.dimas.RedQuit"' --level info
+/// Журнал RedQuit. Смотреть в Console.app: фильтр «subsystem:com.toysforminds.RedQuit»,
+/// или в терминале: log stream --predicate 'subsystem == "com.toysforminds.RedQuit"' --level info
 ///
 /// Решения пишутся с уровнем notice — они видны и сохраняются без включения отладки.
 /// Подробности для калибровки — info/debug.
 enum Log {
-    static let subsystem = Bundle.main.bundleIdentifier ?? "local.dimas.RedQuit"
+    static let subsystem = Bundle.main.bundleIdentifier ?? "com.toysforminds.RedQuit"
 
     /// Запуск, разрешения, настройки.
     static let app = Logger(subsystem: subsystem, category: "app")

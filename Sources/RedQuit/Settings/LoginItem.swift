@@ -9,10 +9,10 @@ enum LoginItem {
     static func setEnabled(_ enabled: Bool) throws {
         if enabled {
             try SMAppService.mainApp.register()
-            Log.app.notice("Запуск при входе в систему включён (статус: \(status.rawValue))")
+            Log.app.notice("Open at login enabled (status: \(status.rawValue))")
         } else {
             try SMAppService.mainApp.unregister()
-            Log.app.notice("Запуск при входе в систему выключен")
+            Log.app.notice("Open at login disabled")
         }
     }
 

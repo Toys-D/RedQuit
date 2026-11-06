@@ -13,11 +13,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "?"
-        Log.app.notice("RedQuit \(version, privacy: .public) запущен: \(Bundle.main.bundlePath, privacy: .public)")
+        Log.app.notice("RedQuit \(version, privacy: .public) started from \(Bundle.main.bundlePath, privacy: .public)")
 
         // RedQuit работает без окон. Без этого macOS считает такую программу «простаивающей»
         // и может тихо завершить её (Automatic Termination).
-        ProcessInfo.processInfo.disableAutomaticTermination("RedQuit следит за красными кнопками")
+        ProcessInfo.processInfo.disableAutomaticTermination("RedQuit watches red buttons")
 
         let menu = StatusMenuController(prefs: prefs, permissions: permissions)
         menu.onOpenSettings = { [weak self] in self?.showSettings() }
@@ -67,11 +67,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func showSettings() {
         if settingsWindow == nil {
             settingsWindow = makeWindow(
-                title: "Настройки RedQuit",
+                title: L10n.settingsWindowTitle,
                 view: SettingsView(prefs: prefs, permissions: permissions),
                 resizable: true
             )
-            settingsWindow?.setContentSize(NSSize(width: 520, height: 640))
+            // Все настройки целиком, но не выше экрана (на маленьких экранах — прокрутка).
+            let available = (NSScreen.main?.visibleFrame.height ?? 800) - 80
+            settingsWindow?.setContentSize(NSSize(width: 520, height: min(820, available)))
             settingsWindow?.center()
         }
         present(settingsWindow)
@@ -80,7 +82,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func showPermissionWindow() {
         if permissionWindow == nil {
             permissionWindow = makeWindow(
-                title: "RedQuit — Универсальный доступ",
+                title: L10n.permissionWindowTitle,
                 view: PermissionView(permissions: permissions) { [weak self] in self?.permissionWindow?.close() },
                 resizable: false
             )

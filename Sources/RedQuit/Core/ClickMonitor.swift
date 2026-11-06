@@ -33,7 +33,7 @@ final class ClickMonitor {
             }
         }
         if token == nil {
-            Log.app.error("Не удалось установить глобальный монитор мыши")
+            Log.app.error("Could not install the global mouse monitor")
         }
     }
 

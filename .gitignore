@@ -4,3 +4,4 @@
 /.swiftpm/
 *.xcuserstate
 xcuserdata/
+/dist/

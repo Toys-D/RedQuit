@@ -23,23 +23,21 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
     }
 
     private var statusText: String {
-        if !permissions.isTrusted { return "RedQuit: нужен доступ к Универсальному доступу" }
-        if !prefs.isEnabled { return "RedQuit на паузе" }
-        return "RedQuit работает — «\(prefs.mode.title)»"
+        if !permissions.isTrusted { return L10n.statusNeedsAccess }
+        if !prefs.isEnabled { return L10n.statusPaused }
+        return L10n.statusOn(L10n.modeTitle(prefs.mode))
     }
 
-    /// Обновляет значок: работает / пауза / нет доступа.
+    /// Обновляет значок: работает / пауза (приглушён) / нет доступа (треугольник).
     func update() {
-        let symbol: String
+        let image: NSImage?
         if !permissions.isTrusted {
-            symbol = "exclamationmark.triangle"
-        } else if !prefs.isEnabled {
-            symbol = "pause.circle"
+            image = NSImage(systemSymbolName: "exclamationmark.triangle", accessibilityDescription: statusText)
+            image?.isTemplate = true
         } else {
-            symbol = "xmark.circle"
+            image = StatusIcon.image(dimmed: !prefs.isEnabled)
+            image?.accessibilityDescription = statusText
         }
-        let image = NSImage(systemSymbolName: symbol, accessibilityDescription: statusText)
-        image?.isTemplate = true
         statusItem.button?.image = image
         statusItem.button?.toolTip = statusText
     }
@@ -54,29 +52,29 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         menu.addItem(header)
 
         if !permissions.isTrusted {
-            menu.addItem(item("Выдать доступ…", #selector(requestPermission)))
+            menu.addItem(item(L10n.menuGrantAccess, #selector(requestPermission)))
         }
 
         menu.addItem(.separator())
-        menu.addItem(item(prefs.isEnabled ? "Пауза" : "Включить", #selector(toggleEnabled)))
+        menu.addItem(item(prefs.isEnabled ? L10n.menuPause : L10n.menuResume, #selector(toggleEnabled)))
 
-        let modeItem = NSMenuItem(title: "Режим", action: nil, keyEquivalent: "")
+        let modeItem = NSMenuItem(title: L10n.menuMode, action: nil, keyEquivalent: "")
         let modeMenu = NSMenu()
         modeMenu.autoenablesItems = false
         for mode in QuitMode.allCases {
-            let modeChoice = item(mode.title, #selector(selectMode(_:)))
+            let modeChoice = item(L10n.modeTitle(mode), #selector(selectMode(_:)))
             modeChoice.representedObject = mode.rawValue
             modeChoice.state = prefs.mode == mode ? .on : .off
-            modeChoice.toolTip = mode.explanation
+            modeChoice.toolTip = L10n.modeExplanation(mode)
             modeMenu.addItem(modeChoice)
         }
         modeItem.submenu = modeMenu
         menu.addItem(modeItem)
 
         menu.addItem(.separator())
-        menu.addItem(item("Настройки…", #selector(openSettings), key: ","))
+        menu.addItem(item(L10n.menuSettings, #selector(openSettings), key: ","))
         menu.addItem(.separator())
-        menu.addItem(item("Выход", #selector(quit), key: "q"))
+        menu.addItem(item(L10n.menuQuit, #selector(quit), key: "q"))
     }
 
     private func item(_ title: String, _ action: Selector, key: String = "") -> NSMenuItem {
@@ -105,7 +103,7 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
     }
 
     @objc private func quit() {
-        Log.app.notice("Выход по команде из меню")
+        Log.app.notice("Quit from the menu")
         NSApp.terminate(nil)
     }
 }

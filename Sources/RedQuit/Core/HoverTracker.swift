@@ -106,7 +106,7 @@ final class HoverTracker {
             entry.destroyedAt = self.now
         }
         cached = entry
-        Log.click.debug("Курсор над красной кнопкой «\(hit.appName, privacy: .public)» — запомнили")
+        Log.click.debug("Cursor rests on the red button of \"\(hit.appName, privacy: .public)\", remembered")
     }
 
     private func clear() {

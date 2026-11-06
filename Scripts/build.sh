@@ -45,6 +45,9 @@ mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 cp "$BIN_DIR/$APP_NAME" "$APP/Contents/MacOS/$APP_NAME"
 cp "Resources/Info.plist" "$APP/Contents/Info.plist"
 printf 'APPL????' > "$APP/Contents/PkgInfo"
+cp "Resources/AppIcon.icns" "$APP/Contents/Resources/AppIcon.icns"
+# Переводы интерфейса: <язык>.lproj/Localizable.strings
+cp -R Resources/Localization/*.lproj "$APP/Contents/Resources/"
 
 # --- Подпись ------------------------------------------------------------------
 echo "==> Подпись"

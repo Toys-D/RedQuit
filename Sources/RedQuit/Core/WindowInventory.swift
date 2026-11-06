@@ -11,7 +11,7 @@ enum WindowInventory {
         let app = AXUIElementCreateApplication(pid)
         let (list, error) = AX.elements(app, kAXWindowsAttribute)
         guard let list else {
-            Log.decision.info("Список окон через AX не получен: AXError \(error.rawValue)")
+            Log.decision.info("Could not read the window list via AX: AXError \(error.rawValue)")
             return nil
         }
         return list.compactMap { window in

@@ -49,7 +49,7 @@ struct QuitDeciderTests {
         let d = QuitDecider.decide(mode: .lastWindow, closedWindowSubrole: WindowSubrole.standard,
                                    remainingAX: [minimized], otherWindows: [])
         #expect(!d.shouldQuit)
-        #expect(d.reason.contains("свёрнут"))
+        #expect(d.reason.contains("minimized"))
     }
 
     @Test("«Последнее окно»: свёрнутое окно с другой подролью → не завершаем")

@@ -42,7 +42,7 @@ final class WindowCloseWatcher {
 
     func mouseDown(on hit: CloseButtonHit) {
         if let old = pressed {
-            finish(old, .cancelled("новое нажатие раньше, чем отпустили предыдущее"))
+            finish(old, .cancelled("a new press came before the previous one was released"))
         }
         let watch = CloseWatch(hit: hit)
         watch.startObserving { [weak self, weak watch] in
@@ -55,7 +55,7 @@ final class WindowCloseWatcher {
     /// Нажатие пришлось не на красную кнопку.
     func mouseDownElsewhere() {
         if let old = pressed {
-            finish(old, .cancelled("отпускание предыдущего нажатия не получено"))
+            finish(old, .cancelled("the release of the previous press was not received"))
         }
     }
 
@@ -63,15 +63,15 @@ final class WindowCloseWatcher {
         guard let watch = pressed else { return }
         pressed = nil
         guard watch.hit.releaseZone.contains(point) else {
-            finish(watch, .cancelled("кнопку мыши отпустили за пределами красной кнопки — закрытие отменено"))
+            finish(watch, .cancelled("the mouse button was released outside the red button, closing was cancelled"))
             return
         }
         if watch.destroyedWhilePressed {
             // Быстрый клик: уведомление об уничтожении окна пришло раньше события отпускания.
-            finish(watch, .closed(destroyed: true, detail: "окно закрылось сразу после клика"))
+            finish(watch, .closed(destroyed: true, detail: "the window closed right after the click"))
             return
         }
-        Log.watch.info("«\(watch.hit.appName, privacy: .public)»: отпущено на красной кнопке — ждём закрытия окна")
+        Log.watch.info("\"\(watch.hit.appName, privacy: .public)\": released on the red button, waiting for the window to close")
         waiting[ObjectIdentifier(watch)] = watch
         watch.arm()
         watch.startPolling { [weak self, weak watch] in
@@ -95,7 +95,7 @@ final class WindowCloseWatcher {
             return
         }
         guard waiting[ObjectIdentifier(watch)] != nil else { return }
-        finish(watch, .closed(destroyed: true, detail: "уведомление AX: окно уничтожено"))
+        finish(watch, .closed(destroyed: true, detail: "AX notification: window destroyed"))
     }
 
     private func tick(_ watch: CloseWatch) {
@@ -103,29 +103,29 @@ final class WindowCloseWatcher {
         let name = watch.hit.appName
 
         if watch.hit.app.isTerminated {
-            finish(watch, .cancelled("программа завершилась сама"))
+            finish(watch, .cancelled("the app quit by itself"))
             return
         }
 
         let now = Date()
         switch watch.probe() {
         case .destroyed:
-            finish(watch, .closed(destroyed: true, detail: "окно больше не существует"))
+            finish(watch, .closed(destroyed: true, detail: "the window no longer exists"))
             return
         case .hidden:
-            finish(watch, .closed(destroyed: false, detail: "программа убрала окно с экрана"))
+            finish(watch, .closed(destroyed: false, detail: "the app took the window off screen"))
             return
         case .present(let hasDialog):
             if hasDialog {
                 if watch.dialogSeenAt == nil {
-                    Log.watch.notice("«\(name, privacy: .public)»: программа показала диалог — ждём вашего решения")
+                    Log.watch.notice("\"\(name, privacy: .public)\": the app is showing a dialog, waiting for your choice")
                     watch.dialogSeenAt = now
                 }
                 watch.dialogGoneAt = nil
             } else if watch.dialogSeenAt != nil {
                 if let gone = watch.dialogGoneAt {
                     if now.timeIntervalSince(gone) > Timing.dialogGrace {
-                        finish(watch, .cancelled("диалог закрылся, а окно осталось — похоже, нажали «Отмена»"))
+                        finish(watch, .cancelled("the dialog closed but the window stayed, looks like Cancel was pressed"))
                         return
                     }
                 } else {
@@ -136,7 +136,7 @@ final class WindowCloseWatcher {
             break
         case .unresponsive:
             if !watch.sawBusy {
-                Log.watch.info("«\(name, privacy: .public)»: программа не отвечает на запросы AX — подождём подольше")
+                Log.watch.info("\"\(name, privacy: .public)\": the app is not answering AX requests, waiting longer")
             }
             watch.sawBusy = true
         }
@@ -145,13 +145,13 @@ final class WindowCloseWatcher {
         let reason: String
         if watch.dialogSeenAt != nil {
             limit = Timing.dialogWait
-            reason = "диалог открыт дольше \(Int(limit / 60)) минут — перестаём ждать"
+            reason = "the dialog has been open for more than \(Int(limit / 60)) minutes, giving up"
         } else if watch.sawBusy {
             limit = Timing.busyWait
-            reason = "окно не закрылось за \(Int(limit)) с, программа не отвечает — ничего не делаем"
+            reason = "the window did not close within \(Int(limit)) s and the app is not responding"
         } else {
             limit = Timing.closeWait
-            reason = "окно не закрылось за \(Int(limit)) с — видимо, программа не стала его закрывать"
+            reason = "the window did not close within \(Int(limit)) s, the app apparently kept it open"
         }
         if watch.elapsedSinceArm > limit {
             finish(watch, .cancelled(reason))
@@ -207,7 +207,7 @@ final class CloseWatch {
         let observer = WindowDestroyObserver(pid: hit.pid, window: hit.window)
         observer.onDestroyed = onDestroyed
         if !observer.isActive {
-            Log.watch.info("«\(self.hit.appName, privacy: .public)»: подписка на закрытие окна недоступна — будем только опрашивать окно")
+            Log.watch.info("\"\(self.hit.appName, privacy: .public)\": window-close notifications are unavailable, polling the window instead")
         }
         self.observer = observer
     }

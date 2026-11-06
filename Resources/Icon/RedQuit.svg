@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- RedQuit app icon. Plate: x=100 y=100, side 824, corner radius 185 (macOS icon grid).
+       The sign: a power-switch ring whose stroke is replaced by the red window button. -->
+  <defs>
+    <linearGradient id="plate" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#50555F"/>
+      <stop offset="1" stop-color="#1E2025"/>
+    </linearGradient>
+    <linearGradient id="rim" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.22"/>
+      <stop offset="0.5" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="red" cx="0.38" cy="0.32" r="0.75">
+      <stop offset="0" stop-color="#FF8A80"/>
+      <stop offset="0.55" stop-color="#F2483E"/>
+      <stop offset="1" stop-color="#C42B24"/>
+    </radialGradient>
+    <linearGradient id="gloss" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.75"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect x="100" y="112" width="824" height="824" rx="185" fill="#000000" opacity="0.22"/>
+  <rect x="100" y="100" width="824" height="824" rx="185" fill="url(#plate)"/>
+  <rect x="102" y="102" width="820" height="820" rx="183" fill="none" stroke="url(#rim)" stroke-width="4"/>
+  <path d="M 653.6 363.8 A 230 230 0 1 1 370.4 363.8" fill="none" stroke="#F4F4F6" stroke-width="72" stroke-linecap="round"/>
+  <circle cx="512" cy="300" r="92" fill="url(#red)" stroke="#A8231D" stroke-width="4"/>
+  <ellipse cx="490" cy="262" rx="52" ry="30" fill="url(#gloss)"/>
+</svg>

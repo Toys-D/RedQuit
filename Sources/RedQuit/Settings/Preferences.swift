@@ -19,7 +19,7 @@ final class Preferences: ObservableObject {
         didSet {
             guard isEnabled != oldValue else { return }
             defaults.set(isEnabled, forKey: Key.enabled)
-            Log.app.notice("\(self.isEnabled ? "Включено" : "Пауза", privacy: .public)")
+            Log.app.notice("\(self.isEnabled ? "Resumed" : "Paused", privacy: .public)")
             onChange?()
         }
     }
@@ -28,7 +28,7 @@ final class Preferences: ObservableObject {
         didSet {
             guard mode != oldValue else { return }
             defaults.set(mode.rawValue, forKey: Key.mode)
-            Log.app.notice("Режим: «\(self.mode.title, privacy: .public)»")
+            Log.app.notice("Mode: \(self.mode.logName, privacy: .public)")
             onChange?()
         }
     }
@@ -64,12 +64,12 @@ final class Preferences: ObservableObject {
               !userExclusions.contains(where: { $0.lowercased() == lower })
         else { return false }
         userExclusions.append(bundleID)
-        Log.app.notice("Добавлено исключение: \(bundleID, privacy: .public)")
+        Log.app.notice("Exclusion added: \(bundleID, privacy: .public)")
         return true
     }
 
     func removeExclusion(_ bundleID: String) {
         userExclusions.removeAll { $0 == bundleID }
-        Log.app.notice("Удалено исключение: \(bundleID, privacy: .public)")
+        Log.app.notice("Exclusion removed: \(bundleID, privacy: .public)")
     }
 }

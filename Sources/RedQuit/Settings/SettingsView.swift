@@ -25,6 +25,9 @@ struct ExclusionRow: Identifiable {
 }
 
 struct SettingsView: View {
+    /// Страница проекта (открывается кнопкой «Сайт»).
+    static let website = URL(string: "https://github.com/Toys-D/RedQuit")!
+
     @ObservedObject var prefs: Preferences
     @ObservedObject var permissions: PermissionManager
 
@@ -33,33 +36,37 @@ struct SettingsView: View {
     @State private var addMessage: String?
     @State private var showBuiltIn = false
 
+    private var version: String {
+        Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "?"
+    }
+
     var body: some View {
         Form {
-            Section("Работа") {
-                Toggle("RedQuit включён", isOn: $prefs.isEnabled)
-                Picker("Режим", selection: $prefs.mode) {
+            Section(L10n.sectionGeneral) {
+                Toggle(L10n.settingsEnabled, isOn: $prefs.isEnabled)
+                Picker(L10n.settingsMode, selection: $prefs.mode) {
                     ForEach(QuitMode.allCases) { mode in
-                        Text(mode.title).tag(mode)
+                        Text(L10n.modeTitle(mode)).tag(mode)
                     }
                 }
                 .pickerStyle(.radioGroup)
-                Text(prefs.mode.explanation)
+                Text(L10n.modeExplanation(prefs.mode))
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
 
-            Section("Запуск") {
-                Toggle("Запускать при входе в систему", isOn: loginBinding)
+            Section(L10n.sectionStartup) {
+                Toggle(L10n.settingsOpenAtLogin, isOn: loginBinding)
                 if loginStatus == .requiresApproval {
                     HStack {
-                        Text("macOS ждёт вашего подтверждения в «Объектах входа».")
+                        Text(L10n.settingsLoginNeedsApproval)
                             .font(.caption)
                         Spacer()
-                        Button("Открыть") { LoginItem.openSystemSettings() }
+                        Button(L10n.settingsOpen) { LoginItem.openSystemSettings() }
                     }
                 }
                 if !LoginItem.isInApplicationsFolder {
-                    Text("RedQuit сейчас запущен не из папки «Программы». Для автозапуска сначала переместите его туда.")
+                    Text(L10n.settingsNotInApplications)
                         .font(.caption)
                         .foregroundStyle(.orange)
                 }
@@ -68,55 +75,70 @@ struct SettingsView: View {
                 }
             }
 
-            Section("Доступ") {
+            Section(L10n.sectionAccess) {
                 if permissions.isTrusted {
-                    Label("Универсальный доступ разрешён", systemImage: "checkmark.circle.fill")
+                    Label(L10n.settingsAccessGranted, systemImage: "checkmark.circle.fill")
                         .foregroundStyle(.green)
                 } else {
                     HStack {
-                        Label("Нет доступа к Универсальному доступу", systemImage: "exclamationmark.triangle.fill")
+                        Label(L10n.settingsAccessMissing, systemImage: "exclamationmark.triangle.fill")
                             .foregroundStyle(.orange)
                         Spacer()
-                        Button("Выдать доступ…") { permissions.requestAccess() }
+                        Button(L10n.menuGrantAccess) { permissions.requestAccess() }
                     }
                 }
             }
 
             Section {
                 if prefs.userExclusions.isEmpty {
-                    Text("Список пуст").foregroundStyle(.secondary)
+                    Text(L10n.exclusionsEmpty).foregroundStyle(.secondary)
                 }
                 ForEach(prefs.userExclusions, id: \.self) { bundleID in
                     exclusionRow(ExclusionRow.make(bundleID: bundleID))
                 }
                 HStack {
-                    Button("Добавить программу…", action: addApplications)
+                    Button(L10n.exclusionsAdd, action: addApplications)
                     if let addMessage {
                         Text(addMessage).font(.caption).foregroundStyle(.secondary)
                     }
                 }
-                DisclosureGroup("Встроенные исключения (\(ExclusionRules.builtIn.count + 1))", isExpanded: $showBuiltIn) {
+                DisclosureGroup(L10n.exclusionsBuiltIn(ExclusionRules.builtIn.count + 1), isExpanded: $showBuiltIn) {
                     exclusionRow(ExclusionRow.make(bundleID: Bundle.main.bundleIdentifier ?? "RedQuit",
-                                                   builtInName: "RedQuit (эта утилита)"))
+                                                   builtInName: L10n.exclusionsThisApp))
                     ForEach(ExclusionRules.builtIn) { item in
-                        exclusionRow(ExclusionRow.make(bundleID: item.bundleID, builtInName: item.name))
+                        exclusionRow(ExclusionRow.make(bundleID: item.bundleID, builtInName: L10n.builtInName(item)))
                     }
                 }
             } header: {
-                Text("Исключения")
+                Text(L10n.sectionExclusions)
             } footer: {
-                Text("На эти программы RedQuit не действует. Фоновые программы без значка в Dock (агенты, утилиты строки меню) RedQuit не трогает никогда.")
+                Text(L10n.exclusionsFooter)
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.leading)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
 
-            Section("Журнал") {
-                Text("Что RedQuit сделал и почему, видно в Console.app: в поиске введите «subsystem:\(Log.subsystem)».")
+            Section(L10n.sectionLog) {
+                Text(L10n.logHint(Log.subsystem))
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .textSelection(.enabled)
+            }
+
+            Section(L10n.sectionAbout) {
+                HStack(spacing: 12) {
+                    Image(nsImage: NSApp.applicationIconImage)
+                        .resizable()
+                        .frame(width: 40, height: 40)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("RedQuit").font(.headline)
+                        Text(L10n.aboutVersion(version)).font(.caption).foregroundStyle(.secondary)
+                        Text("© 2026 Toys for Minds").font(.caption).foregroundStyle(.secondary)
+                    }
+                    Spacer()
+                    Button(L10n.aboutWebsite) { NSWorkspace.shared.open(Self.website) }
+                }
             }
         }
         .formStyle(.grouped)
@@ -144,7 +166,7 @@ struct SettingsView: View {
             if row.isBuiltIn {
                 Image(systemName: "lock.fill")
                     .foregroundStyle(.secondary)
-                    .help("Встроенное исключение — удалить нельзя")
+                    .help(L10n.exclusionsBuiltInHelp)
             } else {
                 Button {
                     prefs.removeExclusion(row.id)
@@ -153,7 +175,7 @@ struct SettingsView: View {
                     Image(systemName: "minus.circle.fill").foregroundStyle(.red)
                 }
                 .buttonStyle(.borderless)
-                .help("Удалить из исключений")
+                .help(L10n.exclusionsRemoveHelp)
             }
         }
     }
@@ -168,8 +190,8 @@ struct SettingsView: View {
                     try LoginItem.setEnabled(enabled)
                     loginError = nil
                 } catch {
-                    loginError = "Не удалось изменить автозапуск: \(error.localizedDescription)"
-                    Log.app.error("Ошибка автозапуска: \(error.localizedDescription, privacy: .public)")
+                    loginError = L10n.settingsLoginError(error.localizedDescription)
+                    Log.app.error("Open at login error: \(error.localizedDescription, privacy: .public)")
                 }
                 loginStatus = LoginItem.status
             }
@@ -178,8 +200,8 @@ struct SettingsView: View {
 
     private func addApplications() {
         let panel = NSOpenPanel()
-        panel.title = "Выберите программы, на которые RedQuit не должен действовать"
-        panel.prompt = "Добавить"
+        panel.title = L10n.exclusionsPanelTitle
+        panel.prompt = L10n.exclusionsPanelPrompt
         panel.allowedContentTypes = [.applicationBundle]
         panel.allowsMultipleSelection = true
         panel.canChooseDirectories = false
@@ -190,20 +212,22 @@ struct SettingsView: View {
         var added: [String] = []
         var skipped: [String] = []
         for url in panel.urls {
-            let name = FileManager.default.displayName(atPath: url.path)
+            var name = FileManager.default.displayName(atPath: url.path)
+            if name.hasSuffix(".app") { name = String(name.dropLast(4)) }
             guard let bundleID = Bundle(url: url)?.bundleIdentifier else {
-                skipped.append("\(name) (нет bundle ID)")
+                skipped.append(L10n.exclusionsNoBundleID(name))
                 continue
             }
             if prefs.addExclusion(bundleID) {
                 added.append(name)
             } else {
-                skipped.append("\(name) (уже в списке)")
+                skipped.append(L10n.exclusionsAlreadyListed(name))
             }
         }
+        let separator = Locale.current.language.languageCode?.identifier == "ja" ? "、" : ", "
         var parts: [String] = []
-        if !added.isEmpty { parts.append("Добавлено: \(added.joined(separator: ", "))") }
-        if !skipped.isEmpty { parts.append("Пропущено: \(skipped.joined(separator: ", "))") }
-        addMessage = parts.joined(separator: ". ")
+        if !added.isEmpty { parts.append(L10n.exclusionsAdded(added.joined(separator: separator))) }
+        if !skipped.isEmpty { parts.append(L10n.exclusionsSkipped(skipped.joined(separator: separator))) }
+        addMessage = parts.joined(separator: " ")
     }
 }

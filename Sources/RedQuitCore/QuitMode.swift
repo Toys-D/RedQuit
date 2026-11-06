@@ -1,4 +1,4 @@
-/// Режим работы RedQuit.
+/// Режим работы RedQuit. Названия для интерфейса — в L10n (модуль приложения).
 public enum QuitMode: String, CaseIterable, Identifiable, Sendable {
     /// Программа завершается, когда красной кнопкой закрыто её последнее окно.
     case lastWindow
@@ -7,17 +7,11 @@ public enum QuitMode: String, CaseIterable, Identifiable, Sendable {
 
     public var id: String { rawValue }
 
-    public var title: String {
+    /// Название для журнала (журнал ведётся на английском).
+    public var logName: String {
         switch self {
-        case .lastWindow: "Последнее окно"
-        case .anyWindow: "Любое окно"
-        }
-    }
-
-    public var explanation: String {
-        switch self {
-        case .lastWindow: "Программа завершается, когда красной кнопкой закрыто её последнее окно."
-        case .anyWindow: "Программа завершается при закрытии красной кнопкой любого её окна."
+        case .lastWindow: "Last window"
+        case .anyWindow: "Any window"
         }
     }
 }

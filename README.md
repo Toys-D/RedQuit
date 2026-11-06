@@ -1,129 +1,145 @@
-# RedQuit
+<p align="center">
+  <img src=".github/icon.png" width="128" height="128" alt="RedQuit icon">
+</p>
 
-Утилита для macOS: красная кнопка закрытия окна полностью завершает программу, как в Windows.
+<h1 align="center">RedQuit</h1>
 
-- Работает в фоне, значок только в строке меню.
-- Реагирует **только на клик мышью по красной кнопке**. ⌘W и «Файл → Закрыть» не трогает.
-- Завершает программу **только штатно** (`NSRunningApplication.terminate()`, то же, что ⌘Q).
-  Программа сама спросит о несохранённых документах. Принудительное завершение не используется.
-- Режимы: «Последнее окно» (по умолчанию) и «Любое окно».
-- Исключения: Finder (можно убрать), сама утилита и системные процессы (убрать нельзя).
-  Фоновые программы без значка в Dock RedQuit не трогает никогда.
+<p align="center">
+  <b>Close the window, quit the app.</b><br>
+  The red button on your Mac works the way it does on Windows.
+</p>
 
-## Сборка
+<p align="center">
+  <a href="https://github.com/Toys-D/RedQuit/releases/latest"><img src="https://img.shields.io/github/v/release/Toys-D/RedQuit?label=release" alt="Latest release"></a>
+  <img src="https://img.shields.io/badge/macOS-14%2B-informational" alt="macOS 14+">
+  <img src="https://img.shields.io/badge/Apple%20Silicon%20%26%20Intel-universal-informational" alt="Apple Silicon and Intel">
+  <img src="https://img.shields.io/badge/languages-16-informational" alt="16 languages">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-freeware-orange" alt="License: freeware"></a>
+</p>
 
-Нужен Xcode (или Command Line Tools) и сертификат «Apple Development» в связке ключей.
+<p align="center">
+  <a href="https://github.com/Toys-D/RedQuit/releases/latest"><b>Download RedQuit</b></a> · macOS 14 Sonoma or newer · Apple Silicon and Intel · free
+</p>
+
+<p align="center">
+  <b>English</b> ·
+  <a href="docs/README.ru.md">Русский</a> ·
+  <a href="docs/README.uk.md">Українська</a> ·
+  <a href="docs/README.es.md">Español</a> ·
+  <a href="docs/README.pt-BR.md">Português</a> ·
+  <a href="docs/README.fr.md">Français</a> ·
+  <a href="docs/README.de.md">Deutsch</a> ·
+  <a href="docs/README.it.md">Italiano</a> ·
+  <a href="docs/README.pl.md">Polski</a> ·
+  <a href="docs/README.tr.md">Türkçe</a> ·
+  <a href="docs/README.ja.md">日本語</a> ·
+  <a href="docs/README.ko.md">한국어</a> ·
+  <a href="docs/README.zh-Hans.md">简体中文</a> ·
+  <a href="docs/README.zh-Hant.md">繁體中文</a> ·
+  <a href="docs/README.ar.md">العربية</a> ·
+  <a href="docs/README.hi.md">हिन्दी</a>
+</p>
+
+<img src=".github/banner.png" alt="RedQuit: close the window, quit the app">
+
+## Why
+
+On a Mac, the red button only closes a window. The app keeps running: it stays in the Dock, holds on to memory and waits until you quit it with ⌘Q. If you came from Windows, or you simply expect the red button to mean "I'm done with this app", RedQuit is for you.
+
+RedQuit sits in the menu bar and watches for one thing: a click on the red close button. When that click closes the app's last window, RedQuit quits the app.
+
+## What it does
+
+- **Only the red button.** ⌘W and File ▸ Close work as before. RedQuit reacts only to a mouse click on the red button.
+- **Waits for the window to really close.** If the app asks "Save changes?" and you press Cancel, nothing happens.
+- **Quits the normal way, like ⌘Q.** Apps still ask about unsaved documents. RedQuit never force-quits anything.
+- **Knows where your windows are.** Minimized windows, windows on other desktops and full-screen windows count as open.
+- **Leaves Finder and the system alone.** Add your own exceptions in one click.
+- **Stays out of the way.** No Dock icon, just a small sign in the menu bar.
+- **Speaks your language.** 16 languages, following your Mac's settings.
+- **Private.** RedQuit only reads information about windows. It never clicks anything for you, never blocks or changes your clicks, makes no network connections and collects nothing.
+
+## Two modes
+
+<img src=".github/modes/en.png" alt="Last window mode quits an app when its last window closes; Any window mode quits it when any window closes">
+
+| | **Last window** (default) | **Any window** |
+|---|---|---|
+| Red button on one of several windows | the app keeps running | the app quits |
+| Red button on the last window | the app quits | the app quits |
+| Good for | everyday use | apps you always use with one window |
+
+Switch modes in the menu bar: RedQuit ▸ Mode.
+
+## Screenshots
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset=".github/screenshots/settings-dark.png">
+  <img src=".github/screenshots/settings-light.png" width="520" alt="RedQuit settings: mode, open at login, access, exclusions">
+</picture>
+
+| | |
+|:---:|:---:|
+| <img src=".github/screenshots/menu.png" width="360" alt="The RedQuit menu in the menu bar"> | <img src=".github/screenshots/permission.png" width="420" alt="The window that asks for Accessibility access"> |
+| **The menu:** pause, mode, settings | **First launch:** one switch to turn on |
+
+## Install
+
+1. Download `RedQuit-1.0.0.dmg` from the [releases page](https://github.com/Toys-D/RedQuit/releases/latest) and drag **RedQuit** into **Applications**.
+2. Open RedQuit. It has no paid Apple certificate, so the first time macOS refuses to open it. Go to **System Settings ▸ Privacy & Security**, scroll down and click **Open Anyway**.
+3. RedQuit asks for Accessibility access. Click **Open System Settings** and turn on the switch next to RedQuit in **Privacy & Security ▸ Accessibility**. RedQuit starts working right away, no restart needed.
+4. Optional: in RedQuit's settings, turn on **Open at login**.
+
+**Updating.** Quit RedQuit from its menu and replace the app in Applications. macOS treats each new version as a new app, so the Accessibility switch stops working after an update: select RedQuit in the list, remove it with the **−** button and turn it on again.
+
+## Languages
+
+English, Русский, Українська, Español, Português (Brasil), Français, Deutsch, Italiano, Polski, Türkçe, 日本語, 한국어, 简体中文, 繁體中文, العربية, हिन्दी.
+
+RedQuit follows your Mac's language. To choose another language for RedQuit only, go to **System Settings ▸ General ▸ Language & Region ▸ Applications**. The translations were made with care, but not all of them by native speakers: if something reads oddly, please [open an issue](https://github.com/Toys-D/RedQuit/issues).
+
+## How it works
+
+1. A global mouse monitor receives copies of your clicks. It cannot delay, block or change them.
+2. On a click, RedQuit asks macOS's Accessibility API what is under the pointer. It acts only if that is a window's close button (`AXCloseButton`).
+3. If you release the mouse button away from the red button, the close was cancelled and RedQuit does nothing.
+4. RedQuit waits until the window is really gone. If the app shows "Save changes?", it waits for your answer.
+5. In **Last window** mode it counts the app's remaining windows: regular and minimized ones through Accessibility, and windows on other desktops and in full screen through the window server.
+6. If nothing is left (or in **Any window** mode), RedQuit asks the app to quit, exactly like ⌘Q.
+
+Whenever RedQuit is not sure, it leaves the app running. Every decision is written to the system log: open **Console** and search for `subsystem:com.toysforminds.RedQuit`.
+
+## Build from source
+
+Requires Xcode 15 or newer (Swift 6) on macOS 14 or newer.
 
 ```bash
-./Scripts/build.sh
+./Scripts/build.sh     # builds build/RedQuit.app
+swift test             # unit tests
+./Scripts/release.sh   # universal build and dist/RedQuit-<version>.dmg
 ```
 
-Результат — `build/RedQuit.app`. Скрипт сам выбирает первый действующий сертификат
-Apple Development и подписывает им программу. Другой сертификат можно задать
-так: `SIGN_IDENTITY=<SHA-1> ./Scripts/build.sh`.
+`build.sh` signs the app with your Apple Development certificate if you have one, so the Accessibility permission survives rebuilds. Without one, run `ADHOC=1 ./Scripts/build.sh`.
 
-Юнит-тесты логики:
+The license allows building RedQuit for your own use, but not changing it or sharing changed builds.
 
-```bash
-swift test
-```
+## Support the project
 
-## Установка в «Программы»
+RedQuit is free. If it saves you a few clicks every day and you would like to say thanks, you can support its development.
 
-1. Если RedQuit уже запущен — завершите его: значок в строке меню → «Выход».
-2. Скопируйте программу:
+**[Support via PayPal](https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=pixmap1981%40gmail.com&item_name=RedQuit&currency_code=USD)** · Support is voluntary; nothing in the app depends on it.
 
-   ```bash
-   ditto build/RedQuit.app /Applications/RedQuit.app
-   ```
+## Get in touch
 
-3. Запустите:
+Bugs, questions, ideas: **[pixmap1981@gmail.com](mailto:pixmap1981@gmail.com?subject=RedQuit)**, or open an [issue](https://github.com/Toys-D/RedQuit/issues).
 
-   ```bash
-   open /Applications/RedQuit.app
-   ```
+## License
 
-4. Если macOS попросит доступ к Универсальному доступу — нажмите «Открыть Системные
-   настройки» в окне RedQuit и включите переключатель рядом с RedQuit. Перезапускать не нужно.
-5. Автозапуск: значок в строке меню → «Настройки…» → «Запускать при входе в систему».
-   Включайте его, когда RedQuit уже лежит в «Программах».
+RedQuit is freeware. You may use it free of charge, at home or at work, and share unmodified copies. You may not change it, publish changed versions, or sell it. The full terms are in [LICENSE](LICENSE).
 
-После установки удалите копию из `build/`, чтобы в системе не было двух RedQuit.
+---
 
-## Подпись и разрешение «Универсальный доступ»
-
-macOS привязывает разрешение к подписи программы. При ad-hoc подписи (`codesign -s -`)
-каждая пересборка выглядит как новая программа, и разрешение сбрасывается. Поэтому сборка
-подписывается сертификатом Apple Development: требование подписи зависит только от bundle ID
-(`local.dimas.RedQuit`) и имени сертификата, и разрешение переживает пересборки
-(проверено). Сертификат действует до ноября 2027 года.
-
-Если сертификата нет, можно собрать с `ADHOC=1 ./Scripts/build.sh`. Тогда после каждой
-пересборки разрешение придётся выдавать заново.
-
-## Журнал
-
-Всё, что RedQuit сделал и почему, видно в Console.app: в поиске введите
-`subsystem:local.dimas.RedQuit`. Или в терминале:
-
-```bash
-log stream --predicate 'subsystem == "local.dimas.RedQuit"' --level info
-```
-
-Пример:
-
-```
-«TextEdit» [com.apple.TextEdit]: нажата красная кнопка (окно AXStandardWindow, ...)
-«TextEdit»: программа показала диалог — ждём вашего решения
-«TextEdit»: ничего не делаем — диалог закрылся, а окно осталось — похоже, нажали «Отмена»
-```
-
-## Как это устроено
-
-1. Глобальный монитор мыши (`NSEvent.addGlobalMonitorForEvents`) получает копии нажатий.
-   Он не может задержать или изменить событие.
-2. При нажатии `AXUIElementCopyElementAtPosition` находит элемент под курсором. RedQuit
-   реагирует, только если это `AXCloseButton`. Красная кнопка, над которой остановился
-   курсор, запоминается заранее: при касании трекпада окно может закрыться раньше, чем
-   RedQuit успеет спросить, что под курсором.
-3. Отпустили кнопку мыши вне красной кнопки — закрытие отменено, ничего не делаем.
-4. RedQuit ждёт, пока окно действительно закроется (уведомление AX об уничтожении окна
-   плюс опрос). Если программа показала «Сохранить изменения?», ждёт решения. Диалог
-   закрылся, а окно осталось — значит, нажали «Отмена».
-5. «Последнее окно»: считаются обычные и свёрнутые окна по данным AX. AX не видит окна
-   на других рабочих столах и в полноэкранных пространствах, поэтому дополнительно
-   проверяется список окон оконного сервера по всем рабочим столам. Если окна видит только
-   он, RedQuit перепроверяет через 1 и 2 секунды: так отсеиваются временные окна анимации.
-6. Если окон не осталось (или включён режим «Любое окно») — `terminate()`.
-
-При любом сомнении RedQuit программу не завершает.
-
-Логика решений вынесена в модуль `RedQuitCore` и покрыта тестами (`Tests/`).
-
-## Что проверено (macOS 27.0.1, Apple Silicon)
-
-| # | Сценарий | Результат |
-|---|----------|-----------|
-| 1 | TextEdit, несохранённый документ → красная кнопка → «Отменить» | TextEdit не закрылся ✅ |
-| 2 | TextEdit, несохранённый документ → «Удалить» (не сохранять) | TextEdit завершён ✅ |
-| 3 | Два окна → закрыть одно → закрыть второе (проверено на TextEdit) | Работает, затем завершён ✅ |
-| 4 | Finder → красная кнопка | Finder не тронут ✅ |
-| 5 | Свёрнутое окно + закрыть другое | Не завершён ✅ |
-| 6 | Полноэкранное окно → красная кнопка | Единственное окно — завершён; есть окно на рабочем столе — не завершён ✅ |
-| 7 | Нажать на красную кнопку, увести мышь, отпустить | Ничего не произошло ✅ |
-| 8 | Закрыть окно настроек TextEdit при открытом документе | Не завершён ✅ |
-| — | Окно на другом пространстве (полноэкранном), закрыто окно на рабочем столе | Не завершён ✅ |
-| — | Режим «Любое окно»: закрыть одно из двух окон | Завершён ✅ |
-| — | Закрытие не мышью (AXPress, как ⌘W) | Не тронуто ✅ |
-
-Не проверено автоматически: Safari (сценарий 3 на самом Safari), отдельные рабочие столы
-Mission Control (проверено через полноэкранное пространство), несколько мониторов
-(пересчёт координат покрыт тестами), клики по меню и окну настроек RedQuit.
-
-## Ограничения
-
-- Работает только со стандартными кнопками окон macOS (`AXCloseButton`). Программы,
-  которые рисуют свои кнопки, RedQuit не видит.
-- Решение о «последнем окне» опирается на AX и оконный сервер. Если программа держит
-  нестандартные невидимые окна на рабочих столах, RedQuit может решить, что окна ещё есть,
-  и оставить программу работать (ошибка в безопасную сторону).
+<p align="center">
+  <img src=".github/toys-for-minds.png" width="120" alt="Toys for Minds"><br>
+  <sub>Made by Toys for Minds</sub>
+</p>

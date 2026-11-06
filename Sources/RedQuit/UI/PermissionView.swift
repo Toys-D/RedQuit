@@ -7,32 +7,38 @@ struct PermissionView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            HStack(spacing: 12) {
-                Image(systemName: "hand.raised.circle.fill")
-                    .font(.system(size: 40))
-                    .foregroundStyle(.red)
-                Text("RedQuit нужен доступ\nк Универсальному доступу")
+            HStack(spacing: 14) {
+                Image(nsImage: NSApp.applicationIconImage)
+                    .resizable()
+                    .frame(width: 56, height: 56)
+                Text(L10n.permissionHeading)
                     .font(.title2.bold())
+                    .fixedSize(horizontal: false, vertical: true)
             }
 
-            Text("Без него RedQuit не видит, что вы нажали именно красную кнопку закрытия, и не может проверить, какие окна остались у программы. RedQuit только читает сведения об окнах: он не нажимает ничего за вас и никогда не блокирует и не изменяет нажатия.")
+            Text(L10n.permissionBody)
                 .fixedSize(horizontal: false, vertical: true)
 
             VStack(alignment: .leading, spacing: 6) {
-                Text("1. Нажмите «Открыть Системные настройки».")
-                Text("2. В разделе «Универсальный доступ» включите переключатель рядом с RedQuit.")
-                Text("3. Всё — RedQuit заработает сам, перезапускать его не нужно.")
+                Text(L10n.permissionStep1)
+                Text(L10n.permissionStep2)
+                Text(L10n.permissionStep3)
             }
             .fixedSize(horizontal: false, vertical: true)
 
+            Text(L10n.permissionAfterUpdate)
+                .font(.callout)
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+
             Group {
                 if permissions.isTrusted {
-                    Label("Доступ получен — RedQuit работает", systemImage: "checkmark.circle.fill")
+                    Label(L10n.permissionGranted, systemImage: "checkmark.circle.fill")
                         .foregroundStyle(.green)
                 } else {
                     HStack(spacing: 8) {
                         ProgressView().controlSize(.small)
-                        Text("Ждём, пока вы включите доступ…").foregroundStyle(.secondary)
+                        Text(L10n.permissionWaiting).foregroundStyle(.secondary)
                     }
                 }
             }
@@ -40,14 +46,14 @@ struct PermissionView: View {
 
             HStack {
                 Spacer()
-                Button(permissions.isTrusted ? "Готово" : "Позже", action: onClose)
+                Button(permissions.isTrusted ? L10n.permissionDone : L10n.permissionLater, action: onClose)
                 if !permissions.isTrusted {
-                    Button("Открыть Системные настройки") { permissions.requestAccess() }
+                    Button(L10n.permissionOpenSettings) { permissions.requestAccess() }
                         .keyboardShortcut(.defaultAction)
                 }
             }
         }
         .padding(24)
-        .frame(width: 480)
+        .frame(width: 500)
     }
 }

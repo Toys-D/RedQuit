@@ -14,7 +14,7 @@ final class PermissionManager: ObservableObject {
     private var timer: Timer?
 
     func start() {
-        Log.app.notice("Доступ к Универсальному доступу: \(self.isTrusted ? "есть" : "нет", privacy: .public)")
+        Log.app.notice("Accessibility access: \(self.isTrusted ? "granted" : "not granted", privacy: .public)")
         schedule()
     }
 
@@ -47,7 +47,7 @@ final class PermissionManager: ObservableObject {
         let trusted = AXIsProcessTrusted()
         guard trusted != isTrusted else { return }
         isTrusted = trusted
-        Log.app.notice("\(trusted ? "Доступ к Универсальному доступу получен" : "Доступ к Универсальному доступу отозван", privacy: .public)")
+        Log.app.notice("\(trusted ? "Accessibility access granted" : "Accessibility access revoked", privacy: .public)")
         schedule()
         onChange?(trusted)
     }

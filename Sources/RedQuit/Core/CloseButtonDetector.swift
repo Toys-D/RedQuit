@@ -47,17 +47,17 @@ final class CloseButtonDetector {
 
         guard error == .success, let element = found else {
             if error != .noValue {
-                Log.click.debug("Не удалось узнать элемент под курсором: AXError \(error.rawValue), \(elapsedMs, format: .fixed(precision: 1)) мс")
+                Log.click.debug("Could not get the element under the cursor: AXError \(error.rawValue), \(elapsedMs, format: .fixed(precision: 1)) ms")
             }
             return nil
         }
         let subrole = AX.string(element, kAXSubroleAttribute)
         guard subrole == kAXCloseButtonSubrole else {
-            Log.click.debug("Точка (\(point.x, format: .fixed(precision: 0)), \(point.y, format: .fixed(precision: 0))): под курсором \(AX.string(element, kAXRoleAttribute) ?? "?", privacy: .public)/\(subrole ?? "-", privacy: .public), \(elapsedMs, format: .fixed(precision: 1)) мс")
+            Log.click.debug("Point (\(point.x, format: .fixed(precision: 0)), \(point.y, format: .fixed(precision: 0))): element under the cursor \(AX.string(element, kAXRoleAttribute) ?? "?", privacy: .public)/\(subrole ?? "-", privacy: .public), \(elapsedMs, format: .fixed(precision: 1)) ms")
             return nil
         }
 
-        Log.click.debug("Под курсором кнопка закрытия (\(point.x, format: .fixed(precision: 0)), \(point.y, format: .fixed(precision: 0))), поиск занял \(elapsedMs, format: .fixed(precision: 1)) мс")
+        Log.click.debug("Close button under the cursor at (\(point.x, format: .fixed(precision: 0)), \(point.y, format: .fixed(precision: 0))), lookup took \(elapsedMs, format: .fixed(precision: 1)) ms")
 
         guard let pid = AX.pid(element), pid != ProcessInfo.processInfo.processIdentifier,
               let app = NSRunningApplication(processIdentifier: pid)
@@ -65,12 +65,12 @@ final class CloseButtonDetector {
         let appName = app.localizedName ?? app.bundleIdentifier ?? "pid \(pid)"
 
         if AX.bool(element, kAXEnabledAttribute) == false {
-            Log.click.info("«\(appName, privacy: .public)»: красная кнопка неактивна — пропускаем")
+            Log.click.info("\"\(appName, privacy: .public)\": the red button is disabled, skipping")
             return nil
         }
 
         guard let resolved = resolveWindow(for: element, pid: pid) else {
-            Log.click.notice("«\(appName, privacy: .public)»: нажата красная кнопка, но не удалось определить её окно — пропускаем")
+            Log.click.notice("\"\(appName, privacy: .public)\": red button pressed, but its window could not be found, skipping")
             return nil
         }
         let (window, source) = resolved
@@ -100,19 +100,19 @@ final class CloseButtonDetector {
     private func resolveWindow(for button: AXUIElement, pid: pid_t) -> (AXUIElement, String)? {
         if let window = AX.element(button, kAXWindowAttribute),
            AX.string(window, kAXRoleAttribute) == kAXWindowRole {
-            return (window, "атрибут AXWindow")
+            return (window, "the AXWindow attribute")
         }
         var current = button
         for _ in 0..<10 {
             guard let parent = AX.element(current, kAXParentAttribute) else { break }
             if AX.string(parent, kAXRoleAttribute) == kAXWindowRole {
-                return (parent, "поиск по родителям")
+                return (parent, "the parent chain")
             }
             current = parent
         }
         let app = AXUIElementCreateApplication(pid)
         if let focused = AX.element(app, kAXFocusedWindowAttribute) {
-            return (focused, "активное окно программы")
+            return (focused, "the app’s focused window")
         }
         return nil
     }

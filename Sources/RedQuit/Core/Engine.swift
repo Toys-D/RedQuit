@@ -32,23 +32,23 @@ final class Engine {
         isActive = active
         if active {
             monitor.start()
-            Log.app.notice("Слежение за красными кнопками включено (режим «\(self.prefs.mode.title, privacy: .public)»)")
+            Log.app.notice("Watching red buttons (mode: \(self.prefs.mode.logName, privacy: .public))")
         } else {
             monitor.stop()
             hover.reset()
-            watcher.cancelAll(reason: "слежение выключено")
-            Log.app.notice("Слежение за красными кнопками выключено")
+            watcher.cancelAll(reason: "watching stopped")
+            Log.app.notice("Stopped watching red buttons")
         }
     }
 
     // MARK: - Клик
 
     private func mouseDown(at point: CGPoint, timestamp: TimeInterval) {
-        Log.click.debug("Нажатие кнопки мыши в (\(point.x, format: .fixed(precision: 0)), \(point.y, format: .fixed(precision: 0)))")
+        Log.click.debug("Mouse down at (\(point.x, format: .fixed(precision: 0)), \(point.y, format: .fixed(precision: 0)))")
         var found = detector.hitTest(at: point)
         if found == nil, let remembered = hover.hit(for: point, at: timestamp) {
             // Быстрый клик: окно уже закрылось, но курсор перед этим стоял на его красной кнопке.
-            Log.click.info("«\(remembered.appName, privacy: .public)»: окно закрылось быстрее проверки — берём красную кнопку, найденную при наведении")
+            Log.click.info("\"\(remembered.appName, privacy: .public)\": the window closed before the check, using the red button found on hover")
             found = remembered
         }
         guard let hit = found else {
@@ -56,11 +56,11 @@ final class Engine {
             return
         }
         if let reason = skipReason(for: hit.app) {
-            Log.click.info("«\(hit.appName, privacy: .public)»: красная кнопка, но \(reason, privacy: .public) — не трогаем")
+            Log.click.info("\"\(hit.appName, privacy: .public)\": red button, but \(reason, privacy: .public), leaving it alone")
             return
         }
-        let fullScreen = hit.isFullScreen ? ", полноэкранное" : ""
-        Log.click.notice("«\(hit.appName, privacy: .public)» [\(hit.bundleID ?? "?", privacy: .public)]: нажата красная кнопка (окно \(hit.windowSubrole ?? "?", privacy: .public)\(fullScreen, privacy: .public), найдено через \(hit.windowSource, privacy: .public), id \(hit.windowID.map(String.init) ?? "?", privacy: .public))")
+        let fullScreen = hit.isFullScreen ? ", full screen" : ""
+        Log.click.notice("\"\(hit.appName, privacy: .public)\" [\(hit.bundleID ?? "?", privacy: .public)]: red button pressed (window \(hit.windowSubrole ?? "?", privacy: .public)\(fullScreen, privacy: .public), found via \(hit.windowSource, privacy: .public), id \(hit.windowID.map(String.init) ?? "?", privacy: .public))")
         watcher.mouseDown(on: hit)
     }
 
@@ -73,7 +73,7 @@ final class Engine {
             return reason
         }
         if app.activationPolicy != .regular {
-            return "это фоновая программа без значка в Dock"
+            return "it is a background app without a Dock icon"
         }
         return nil
     }
@@ -83,9 +83,9 @@ final class Engine {
     private func handle(_ hit: CloseButtonHit, _ result: WindowCloseWatcher.Result) {
         switch result {
         case .cancelled(let reason):
-            Log.watch.notice("«\(hit.appName, privacy: .public)»: ничего не делаем — \(reason, privacy: .public)")
+            Log.watch.notice("\"\(hit.appName, privacy: .public)\": doing nothing, \(reason, privacy: .public)")
         case .closed(let destroyed, let detail):
-            Log.watch.notice("«\(hit.appName, privacy: .public)»: окно закрыто (\(detail, privacy: .public))")
+            Log.watch.notice("\"\(hit.appName, privacy: .public)\": window closed (\(detail, privacy: .public))")
             Task { @MainActor [weak self] in
                 try? await Task.sleep(for: Self.settleDelay)
                 self?.decide(hit, windowDestroyed: destroyed)
@@ -98,15 +98,15 @@ final class Engine {
     private func decide(_ hit: CloseButtonHit, windowDestroyed: Bool, attempt: Int = 0) {
         let name = hit.appName
         guard isActive, prefs.isEnabled else {
-            Log.decision.notice("«\(name, privacy: .public)»: RedQuit на паузе — ничего не делаем")
+            Log.decision.notice("\"\(name, privacy: .public)\": RedQuit is paused, doing nothing")
             return
         }
         guard !hit.app.isTerminated else {
-            Log.decision.notice("«\(name, privacy: .public)»: программа уже завершилась сама")
+            Log.decision.notice("\"\(name, privacy: .public)\": the app has already quit by itself")
             return
         }
         if let reason = skipReason(for: hit.app) {
-            Log.decision.notice("«\(name, privacy: .public)»: \(reason, privacy: .public) — не трогаем")
+            Log.decision.notice("\"\(name, privacy: .public)\": \(reason, privacy: .public), leaving it alone")
             return
         }
 
@@ -118,9 +118,9 @@ final class Engine {
             remaining = WindowInventory.axWindows(pid: hit.pid, excluding: hit.window)
             if let remaining {
                 let details = remaining
-                    .map { "\($0.subrole ?? "без подроли")\($0.isMinimized ? " (свёрнуто)" : "")" }
+                    .map { "\($0.subrole ?? "no subrole")\($0.isMinimized ? " (minimized)" : "")" }
                     .joined(separator: ", ")
-                Log.decision.info("«\(name, privacy: .public)»: окон по данным AX: \(remaining.count) [\(details, privacy: .public)]")
+                Log.decision.info("\"\(name, privacy: .public)\": windows according to AX: \(remaining.count) [\(details, privacy: .public)]")
             }
             let hasOpen = remaining?.contains(where: \.countsAsOpen) ?? false
             if remaining != nil, !hasOpen {
@@ -129,7 +129,7 @@ final class Engine {
                 let exclude: Set<UInt32> = windowDestroyed ? Set(hit.windowID.map { [$0] } ?? []) : []
                 others = WindowInventory.otherWindows(pid: hit.pid, excluding: exclude)
                 for record in others {
-                    Log.decision.info("«\(name, privacy: .public)»: оконный сервер видит окно id \(record.windowID), \(Int(record.bounds.width))×\(Int(record.bounds.height)), на экране: \(record.isOnscreen)")
+                    Log.decision.info("\"\(name, privacy: .public)\": the window server sees window id \(record.windowID), \(Int(record.bounds.width))×\(Int(record.bounds.height)), on screen: \(record.isOnscreen)")
                 }
             }
         }
@@ -145,7 +145,7 @@ final class Engine {
         // режима создаёт окно во весь экран). Временное быстро исчезает — перепроверяем.
         if !decision.shouldQuit, !others.isEmpty, attempt < Self.recheckDelays.count {
             let delay = Self.recheckDelays[attempt]
-            Log.decision.info("«\(name, privacy: .public)»: окна видит только оконный сервер — перепроверим через \(delay.components.seconds) с")
+            Log.decision.info("\"\(name, privacy: .public)\": only the window server sees windows, checking again in \(delay.components.seconds) s")
             Task { @MainActor [weak self] in
                 try? await Task.sleep(for: delay)
                 self?.decide(hit, windowDestroyed: windowDestroyed, attempt: attempt + 1)
@@ -155,7 +155,7 @@ final class Engine {
 
         switch decision {
         case .keep(let reason):
-            Log.decision.notice("«\(name, privacy: .public)» продолжает работать: \(reason, privacy: .public)")
+            Log.decision.notice("\"\(name, privacy: .public)\" keeps running: \(reason, privacy: .public)")
         case .quit(let reason):
             terminate(hit, reason: reason)
         }
@@ -171,9 +171,9 @@ final class Engine {
         // Только штатное завершение — то же, что ⌘Q. Программа сама спросит о несохранённом.
         let sent = hit.app.terminate()
         if sent {
-            Log.decision.notice("«\(hit.appName, privacy: .public)»: завершаем штатно (как ⌘Q) — \(reason, privacy: .public)")
+            Log.decision.notice("\"\(hit.appName, privacy: .public)\": quitting normally (like ⌘Q): \(reason, privacy: .public)")
         } else {
-            Log.decision.error("«\(hit.appName, privacy: .public)»: macOS не принял запрос на завершение")
+            Log.decision.error("\"\(hit.appName, privacy: .public)\": macOS did not accept the quit request")
         }
 
         let pid = hit.pid

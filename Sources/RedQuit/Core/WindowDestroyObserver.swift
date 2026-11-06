@@ -28,13 +28,13 @@ final class WindowDestroyObserver {
             }
         }, &created)
         guard error == .success, let created else {
-            Log.watch.debug("AXObserver не создан (AXError \(error.rawValue))")
+            Log.watch.debug("AXObserver not created (AXError \(error.rawValue))")
             return
         }
         let refcon = Unmanaged.passUnretained(self).toOpaque()
         let addError = AXObserverAddNotification(created, window, kAXUIElementDestroyedNotification as CFString, refcon)
         guard addError == .success else {
-            Log.watch.debug("Подписка на уничтожение окна не удалась (AXError \(addError.rawValue))")
+            Log.watch.debug("Could not subscribe to window destruction (AXError \(addError.rawValue))")
             return
         }
         // Общие режимы цикла: уведомление придёт, даже пока открыто меню RedQuit.
