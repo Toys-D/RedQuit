@@ -109,7 +109,7 @@ English, Русский, Українська, Español, Português (Brasil), Fr
 5. في وضع **النافذة الأخيرة**، يعدّ النوافذ المتبقية للتطبيق: النوافذ العادية والمصغّرة عبر تسهيلات الاستخدام، والنوافذ على أسطح المكتب الأخرى وفي وضع ملء الشاشة عبر خادم النوافذ.
 6. إذا لم يتبقَّ شيء (أو في وضع **أي نافذة**)، يطلب RedQuit من التطبيق إنهاء نفسه، تمامًا مثل ⌘Q.
 
-كلما لم يكن RedQuit متأكدًا، يترك التطبيق قيد التشغيل. ويُسجَّل كل قرار في سجل النظام: افتح تطبيق **السِّجل** (Console) وابحث عن `subsystem:com.toysforminds.RedQuit`.
+كلما لم يكن RedQuit متأكدًا، يترك التطبيق قيد التشغيل. ويُسجَّل كل قرار في سجل النظام: افتح تطبيق **السِّجل** (Console) وابحث عن `subsystem:com.pixmaplabs.RedQuit`.
 
 ## البناء من المصدر
 
@@ -146,8 +146,8 @@ RedQuit برنامج مجاني (freeware). يمكنك استخدامه مجان
 ---
 
 <p align="center">
-  <img src="../.github/toys-for-minds.png" width="120" alt="Toys for Minds"><br>
-  <sub>من صنع Toys for Minds</sub>
+  <img src="../.github/pixmap-labs.png" width="120" alt="Pixmap Labs"><br>
+  <sub>من صنع Pixmap Labs</sub>
 </p>
 
 </div>

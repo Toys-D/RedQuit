@@ -134,7 +134,7 @@ struct SettingsView: View {
                     VStack(alignment: .leading, spacing: 2) {
                         Text("RedQuit").font(.headline)
                         Text(L10n.aboutVersion(version)).font(.caption).foregroundStyle(.secondary)
-                        Text("© 2026 Toys for Minds").font(.caption).foregroundStyle(.secondary)
+                        Text("© 2026 Pixmap Labs").font(.caption).foregroundStyle(.secondary)
                     }
                     Spacer()
                     Button(L10n.aboutWebsite) { NSWorkspace.shared.open(Self.website) }

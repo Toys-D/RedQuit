@@ -107,7 +107,7 @@ RedQuit, Mac’inizin dilini kullanır. Yalnızca RedQuit için başka bir dil s
 5. **Son pencere** modunda uygulamanın kalan pencerelerini sayar: Normal ve simge durumuna küçültülmüş pencereleri Erişilebilirlik aracılığıyla, diğer masaüstlerindeki ve tam ekrandaki pencereleri ise pencere sunucusu aracılığıyla.
 6. Hiç pencere kalmadıysa (veya **Herhangi bir pencere** modunda) RedQuit, tıpkı ⌘Q gibi, uygulamadan çıkmasını ister.
 
-RedQuit emin olmadığı her durumda uygulamayı çalışır hâlde bırakır. Her karar sistem günlüğüne yazılır: **Konsol** uygulamasını açın ve `subsystem:com.toysforminds.RedQuit` ifadesini arayın.
+RedQuit emin olmadığı her durumda uygulamayı çalışır hâlde bırakır. Her karar sistem günlüğüne yazılır: **Konsol** uygulamasını açın ve `subsystem:com.pixmaplabs.RedQuit` ifadesini arayın.
 
 ## Kaynak koddan derleme
 
@@ -140,6 +140,6 @@ RedQuit ücretsiz bir yazılımdır (freeware). Evde veya işte ücretsiz olarak
 ---
 
 <p align="center">
-  <img src="../.github/toys-for-minds.png" width="120" alt="Toys for Minds"><br>
-  <sub>Toys for Minds tarafından yapıldı</sub>
+  <img src="../.github/pixmap-labs.png" width="120" alt="Pixmap Labs"><br>
+  <sub>Pixmap Labs tarafından yapıldı</sub>
 </p>

@@ -107,7 +107,7 @@ RedQuit 會跟隨 Mac 的語言。若只想為 RedQuit 選擇其他語言，請�
 5. 在**最後一個視窗**模式中，它會計算 App 剩下的視窗：一般視窗和縮到最小的視窗透過輔助使用計算，其他桌面上的視窗和全螢幕視窗則透過視窗伺服器計算。
 6. 如果沒有剩下任何視窗（或在**任一視窗**模式中），RedQuit 會要求 App 結束，與 ⌘Q 完全相同。
 
-只要 RedQuit 不確定，就會讓 App 繼續執行。每個決定都會寫入系統記錄：打開**主控台**並搜尋 `subsystem:com.toysforminds.RedQuit`。
+只要 RedQuit 不確定，就會讓 App 繼續執行。每個決定都會寫入系統記錄：打開**主控台**並搜尋 `subsystem:com.pixmaplabs.RedQuit`。
 
 ## 從原始碼建置
 
@@ -140,6 +140,6 @@ RedQuit 是免費軟體。你可以在家中或工作場所免費使用它，並
 ---
 
 <p align="center">
-  <img src="../.github/toys-for-minds.png" width="120" alt="Toys for Minds"><br>
-  <sub>由 Toys for Minds 製作</sub>
+  <img src="../.github/pixmap-labs.png" width="120" alt="Pixmap Labs"><br>
+  <sub>由 Pixmap Labs 製作</sub>
 </p>

@@ -3,7 +3,7 @@ import Testing
 
 @Suite("Исключения")
 struct ExclusionRulesTests {
-    let own = "com.toysforminds.RedQuit"
+    let own = "com.pixmaplabs.RedQuit"
 
     @Test("Программа без bundle ID не трогается")
     func noBundleID() {

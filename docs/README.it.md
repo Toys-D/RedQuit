@@ -107,7 +107,7 @@ RedQuit segue la lingua del tuo Mac. Per scegliere un’altra lingua solo per Re
 5. In modalità **Ultima finestra** conta le finestre rimaste dell’app: quelle normali e quelle ridotte nel Dock tramite Accessibilità, quelle su altre scrivanie e a tutto schermo tramite il window server.
 6. Se non resta nulla (o in modalità **Qualsiasi finestra**), RedQuit chiede all’app di chiudersi, esattamente come ⌘Q.
 
-Quando RedQuit non è sicuro, lascia l’app in esecuzione. Ogni decisione viene scritta nel log di sistema: apri **Console** e cerca `subsystem:com.toysforminds.RedQuit`.
+Quando RedQuit non è sicuro, lascia l’app in esecuzione. Ogni decisione viene scritta nel log di sistema: apri **Console** e cerca `subsystem:com.pixmaplabs.RedQuit`.
 
 ## Compilare dal codice sorgente
 
@@ -140,6 +140,6 @@ RedQuit è freeware. Puoi usarlo gratuitamente, a casa o al lavoro, e condivider
 ---
 
 <p align="center">
-  <img src="../.github/toys-for-minds.png" width="120" alt="Toys for Minds"><br>
-  <sub>Creato da Toys for Minds</sub>
+  <img src="../.github/pixmap-labs.png" width="120" alt="Pixmap Labs"><br>
+  <sub>Creato da Pixmap Labs</sub>
 </p>

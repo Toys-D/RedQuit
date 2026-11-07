@@ -107,7 +107,7 @@ RedQuit은 Mac의 언어를 따릅니다. RedQuit에만 다른 언어를 사용�
 5. **마지막 윈도우** 모드에서는 앱에 남아 있는 윈도우를 셉니다. 일반 윈도우와 최소화된 윈도우는 손쉬운 사용을 통해, 다른 데스크탑에 있는 윈도우와 전체 화면 윈도우는 윈도우 서버를 통해 확인합니다.
 6. 남은 윈도우가 없으면(또는 **아무 윈도우** 모드에서는) RedQuit이 ⌘Q와 똑같은 방식으로 앱에 종료를 요청합니다.
 
-RedQuit은 확실하지 않을 때는 언제나 앱을 그대로 실행 상태로 둡니다. 모든 판단은 시스템 로그에 기록됩니다. **콘솔**을 열고 `subsystem:com.toysforminds.RedQuit`을 검색하세요.
+RedQuit은 확실하지 않을 때는 언제나 앱을 그대로 실행 상태로 둡니다. 모든 판단은 시스템 로그에 기록됩니다. **콘솔**을 열고 `subsystem:com.pixmaplabs.RedQuit`을 검색하세요.
 
 ## 소스에서 빌드하기
 
@@ -140,6 +140,6 @@ RedQuit은 프리웨어입니다. 가정이나 직장에서 무료로 사용할 
 ---
 
 <p align="center">
-  <img src="../.github/toys-for-minds.png" width="120" alt="Toys for Minds"><br>
-  <sub>제작: Toys for Minds</sub>
+  <img src="../.github/pixmap-labs.png" width="120" alt="Pixmap Labs"><br>
+  <sub>제작: Pixmap Labs</sub>
 </p>

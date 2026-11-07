@@ -107,7 +107,7 @@ RedQuit używa języka Twojego Maca. Aby wybrać inny język tylko dla RedQuit, 
 5. W trybie **Ostatnie okno** liczy pozostałe okna aplikacji: zwykłe i zminimalizowane za pomocą API dostępności, a okna na innych biurkach i w trybie pełnoekranowym za pomocą serwera okien.
 6. Jeśli nic nie zostało (lub w trybie **Dowolne okno**), RedQuit prosi aplikację o zakończenie działania, dokładnie tak jak ⌘Q.
 
-Gdy RedQuit nie ma pewności, zostawia aplikację uruchomioną. Każda decyzja jest zapisywana w dzienniku systemowym: otwórz aplikację **Konsola** i wyszukaj `subsystem:com.toysforminds.RedQuit`.
+Gdy RedQuit nie ma pewności, zostawia aplikację uruchomioną. Każda decyzja jest zapisywana w dzienniku systemowym: otwórz aplikację **Konsola** i wyszukaj `subsystem:com.pixmaplabs.RedQuit`.
 
 ## Budowanie ze źródeł
 
@@ -140,6 +140,6 @@ RedQuit to freeware. Możesz używać go bezpłatnie, w domu lub w pracy, i udos
 ---
 
 <p align="center">
-  <img src="../.github/toys-for-minds.png" width="120" alt="Toys for Minds"><br>
-  <sub>Stworzone przez Toys for Minds</sub>
+  <img src="../.github/pixmap-labs.png" width="120" alt="Pixmap Labs"><br>
+  <sub>Stworzone przez Pixmap Labs</sub>
 </p>

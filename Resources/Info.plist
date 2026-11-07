@@ -26,7 +26,7 @@
 	<key>CFBundleExecutable</key>
 	<string>RedQuit</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.toysforminds.RedQuit</string>
+	<string>com.pixmaplabs.RedQuit</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -54,6 +54,6 @@
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 	<key>NSHumanReadableCopyright</key>
-	<string>© 2026 Toys for Minds</string>
+	<string>© 2026 Pixmap Labs</string>
 </dict>
 </plist>

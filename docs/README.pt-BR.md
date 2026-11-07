@@ -107,7 +107,7 @@ O RedQuit segue o idioma do seu Mac. Para escolher outro idioma apenas para o Re
 5. No modo **Última janela**, ele conta as janelas restantes do app: as normais e as minimizadas pela Acessibilidade, e as janelas em outras mesas e em tela cheia pelo servidor de janelas.
 6. Se não sobrar nenhuma (ou no modo **Qualquer janela**), o RedQuit pede ao app que seja encerrado, exatamente como ⌘Q.
 
-Sempre que o RedQuit não tem certeza, ele deixa o app em execução. Cada decisão é registrada no log do sistema: abra o **Console** e busque `subsystem:com.toysforminds.RedQuit`.
+Sempre que o RedQuit não tem certeza, ele deixa o app em execução. Cada decisão é registrada no log do sistema: abra o **Console** e busque `subsystem:com.pixmaplabs.RedQuit`.
 
 ## Compilar a partir do código-fonte
 
@@ -140,6 +140,6 @@ O RedQuit é freeware. Você pode usá-lo gratuitamente, em casa ou no trabalho,
 ---
 
 <p align="center">
-  <img src="../.github/toys-for-minds.png" width="120" alt="Toys for Minds"><br>
-  <sub>Feito por Toys for Minds</sub>
+  <img src="../.github/pixmap-labs.png" width="120" alt="Pixmap Labs"><br>
+  <sub>Feito por Pixmap Labs</sub>
 </p>

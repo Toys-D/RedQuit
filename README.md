@@ -107,7 +107,7 @@ RedQuit follows your Mac's language. To choose another language for RedQuit only
 5. In **Last window** mode it counts the app's remaining windows: regular and minimized ones through Accessibility, and windows on other desktops and in full screen through the window server.
 6. If nothing is left (or in **Any window** mode), RedQuit asks the app to quit, exactly like ⌘Q.
 
-Whenever RedQuit is not sure, it leaves the app running. Every decision is written to the system log: open **Console** and search for `subsystem:com.toysforminds.RedQuit`.
+Whenever RedQuit is not sure, it leaves the app running. Every decision is written to the system log: open **Console** and search for `subsystem:com.pixmaplabs.RedQuit`.
 
 ## Build from source
 
@@ -140,6 +140,6 @@ RedQuit is freeware. You may use it free of charge, at home or at work, and shar
 ---
 
 <p align="center">
-  <img src=".github/toys-for-minds.png" width="120" alt="Toys for Minds"><br>
-  <sub>Made by Toys for Minds</sub>
+  <img src=".github/pixmap-labs.png" width="120" alt="Pixmap Labs"><br>
+  <sub>Made by Pixmap Labs</sub>
 </p>

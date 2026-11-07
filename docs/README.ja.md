@@ -107,7 +107,7 @@ RedQuitはMacの言語に従います。RedQuitだけ別の言語にしたい場
 5. **最後のウインドウ**モードでは、アプリに残っているウインドウを数えます。通常のウインドウとしまわれたウインドウはアクセシビリティ経由で、ほかのデスクトップにあるウインドウとフルスクリーンのウインドウはウインドウサーバ経由で確認します。
 6. 何も残っていなければ（または**いずれかのウインドウ**モードの場合は）、RedQuitは⌘Qとまったく同じ方法でアプリに終了を要求します。
 
-RedQuitは確信が持てないときは、必ずアプリをそのまま動作させておきます。すべての判断はシステムログに記録されます。**コンソール**を開いて`subsystem:com.toysforminds.RedQuit`を検索してください。
+RedQuitは確信が持てないときは、必ずアプリをそのまま動作させておきます。すべての判断はシステムログに記録されます。**コンソール**を開いて`subsystem:com.pixmaplabs.RedQuit`を検索してください。
 
 ## ソースからビルド
 
@@ -140,6 +140,6 @@ RedQuitはフリーウェアです。家庭でも職場でも無料で使用で�
 ---
 
 <p align="center">
-  <img src="../.github/toys-for-minds.png" width="120" alt="Toys for Minds"><br>
-  <sub>制作：Toys for Minds</sub>
+  <img src="../.github/pixmap-labs.png" width="120" alt="Pixmap Labs"><br>
+  <sub>制作：Pixmap Labs</sub>
 </p>

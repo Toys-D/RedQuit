@@ -107,7 +107,7 @@ RedQuit 跟随 Mac 的语言。若只想为 RedQuit 选择其他语言，请前�
 5. 在**最后一个窗口**模式下，它会统计 App 剩余的窗口：通过辅助功能统计普通窗口和最小化的窗口，通过窗口服务器统计其他桌面上的窗口和全屏幕窗口。
 6. 如果没有剩余窗口（或处于**任意窗口**模式），RedQuit 会请求 App 退出，与 ⌘Q 完全相同。
 
-只要 RedQuit 不确定，就会让 App 继续运行。每个决定都会写入系统日志：打开**控制台**并搜索 `subsystem:com.toysforminds.RedQuit`。
+只要 RedQuit 不确定，就会让 App 继续运行。每个决定都会写入系统日志：打开**控制台**并搜索 `subsystem:com.pixmaplabs.RedQuit`。
 
 ## 从源代码构建
 
@@ -140,6 +140,6 @@ RedQuit 是免费软件。你可以在家中或工作中免费使用它，并分
 ---
 
 <p align="center">
-  <img src="../.github/toys-for-minds.png" width="120" alt="Toys for Minds"><br>
-  <sub>由 Toys for Minds 制作</sub>
+  <img src="../.github/pixmap-labs.png" width="120" alt="Pixmap Labs"><br>
+  <sub>由 Pixmap Labs 制作</sub>
 </p>
