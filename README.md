@@ -111,7 +111,7 @@ Whenever RedQuit is not sure, it leaves the app running. Every decision is writt
 
 ## Build from source
 
-Requires Xcode 15 or newer (Swift 6) on macOS 14 or newer.
+Requires Xcode 16 or newer (Swift 6) on macOS 14 or newer.
 
 ```bash
 ./Scripts/build.sh     # builds build/RedQuit.app

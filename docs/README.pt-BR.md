@@ -111,7 +111,7 @@ Sempre que o RedQuit não tem certeza, ele deixa o app em execução. Cada decis
 
 ## Compilar a partir do código-fonte
 
-Requer Xcode 15 ou posterior (Swift 6) no macOS 14 ou posterior.
+Requer Xcode 16 ou posterior (Swift 6) no macOS 14 ou posterior.
 
 ```bash
 ./Scripts/build.sh     # builds build/RedQuit.app

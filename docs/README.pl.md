@@ -111,7 +111,7 @@ Gdy RedQuit nie ma pewności, zostawia aplikację uruchomioną. Każda decyzja j
 
 ## Budowanie ze źródeł
 
-Wymaga Xcode 15 lub nowszego (Swift 6) w systemie macOS 14 lub nowszym.
+Wymaga Xcode 16 lub nowszego (Swift 6) w systemie macOS 14 lub nowszym.
 
 ```bash
 ./Scripts/build.sh     # builds build/RedQuit.app

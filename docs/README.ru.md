@@ -111,7 +111,7 @@ RedQuit использует язык вашего Mac. Чтобы выбрат�
 
 ## Сборка из исходного кода
 
-Нужен Xcode 15 или новее (Swift 6) на macOS 14 или новее.
+Нужен Xcode 16 или новее (Swift 6) на macOS 14 или новее.
 
 ```bash
 ./Scripts/build.sh     # builds build/RedQuit.app

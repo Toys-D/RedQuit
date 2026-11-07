@@ -111,7 +111,7 @@ Dès que RedQuit a un doute, il laisse l’app tourner. Chaque décision est con
 
 ## Compiler depuis les sources
 
-Nécessite Xcode 15 ou ultérieur (Swift 6) sous macOS 14 ou ultérieur.
+Nécessite Xcode 16 ou ultérieur (Swift 6) sous macOS 14 ou ultérieur.
 
 ```bash
 ./Scripts/build.sh     # builds build/RedQuit.app

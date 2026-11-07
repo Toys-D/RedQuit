@@ -111,7 +111,7 @@ RedQuit은 확실하지 않을 때는 언제나 앱을 그대로 실행 상태�
 
 ## 소스에서 빌드하기
 
-macOS 14 이상에서 Xcode 15 이상(Swift 6)이 필요합니다.
+macOS 14 이상에서 Xcode 16 이상(Swift 6)이 필요합니다.
 
 ```bash
 ./Scripts/build.sh     # builds build/RedQuit.app

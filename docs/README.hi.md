@@ -111,7 +111,7 @@ RedQuit आपके Mac की भाषा का पालन करता �
 
 ## सोर्स से बिल्ड करें
 
-macOS 14 या नए पर Xcode 15 या नया (Swift 6) ज़रूरी है।
+macOS 14 या नए पर Xcode 16 या नया (Swift 6) ज़रूरी है।
 
 ```bash
 ./Scripts/build.sh     # builds build/RedQuit.app

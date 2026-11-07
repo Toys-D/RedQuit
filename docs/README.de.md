@@ -111,7 +111,7 @@ Wann immer RedQuit sich nicht sicher ist, lässt es die App weiterlaufen. Jede E
 
 ## Aus dem Quellcode erstellen
 
-Erfordert Xcode 15 oder neuer (Swift 6) unter macOS 14 oder neuer.
+Erfordert Xcode 16 oder neuer (Swift 6) unter macOS 14 oder neuer.
 
 ```bash
 ./Scripts/build.sh     # builds build/RedQuit.app

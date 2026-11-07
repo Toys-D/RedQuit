@@ -111,7 +111,7 @@ Quando RedQuit non è sicuro, lascia l’app in esecuzione. Ogni decisione viene
 
 ## Compilare dal codice sorgente
 
-Richiede Xcode 15 o versioni successive (Swift 6) su macOS 14 o versioni successive.
+Richiede Xcode 16 o versioni successive (Swift 6) su macOS 14 o versioni successive.
 
 ```bash
 ./Scripts/build.sh     # builds build/RedQuit.app

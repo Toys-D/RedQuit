@@ -111,7 +111,7 @@ RedQuit emin olmadığı her durumda uygulamayı çalışır hâlde bırakır. H
 
 ## Kaynak koddan derleme
 
-macOS 14 veya daha yenisinde Xcode 15 veya daha yenisi (Swift 6) gerekir.
+macOS 14 veya daha yenisinde Xcode 16 veya daha yenisi (Swift 6) gerekir.
 
 ```bash
 ./Scripts/build.sh     # builds build/RedQuit.app

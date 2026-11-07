@@ -111,7 +111,7 @@ RedQuit 會跟隨 Mac 的語言。若只想為 RedQuit 選擇其他語言，請�
 
 ## 從原始碼建置
 
-需要 macOS 14 或以上版本，以及 Xcode 15 或以上版本（Swift 6）。
+需要 macOS 14 或以上版本，以及 Xcode 16 或以上版本（Swift 6）。
 
 ```bash
 ./Scripts/build.sh     # builds build/RedQuit.app

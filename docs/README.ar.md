@@ -113,7 +113,7 @@ English, Русский, Українська, Español, Português (Brasil), Fr
 
 ## البناء من المصدر
 
-يتطلب Xcode 15 أو أحدث (Swift 6) على macOS 14 أو أحدث.
+يتطلب Xcode 16 أو أحدث (Swift 6) على macOS 14 أو أحدث.
 
 <div dir="ltr">
 
