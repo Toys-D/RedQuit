@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- README: building from source requires Xcode 16 or newer (Swift 6), not Xcode 15.
+
 ## 1.0.0 — 2026-11-07
 
 The first public release.
