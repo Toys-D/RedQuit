@@ -85,7 +85,7 @@ Switch modes in the menu bar: RedQuit ▸ Mode.
 
 ## Install
 
-1. Download `RedQuit-1.0.0.dmg` from the [releases page](https://github.com/Toys-D/RedQuit/releases/latest) and drag **RedQuit** into **Applications**.
+1. Download `RedQuit-1.0.1.dmg` from the [releases page](https://github.com/Toys-D/RedQuit/releases/latest) and drag **RedQuit** into **Applications**.
 2. Open RedQuit. It has no paid Apple certificate, so the first time macOS refuses to open it. Go to **System Settings ▸ Privacy & Security**, scroll down and click **Open Anyway**.
 3. RedQuit asks for Accessibility access. Click **Open System Settings** and turn on the switch next to RedQuit in **Privacy & Security ▸ Accessibility**. RedQuit starts working right away, no restart needed.
 4. Optional: in RedQuit's settings, turn on **Open at login**.

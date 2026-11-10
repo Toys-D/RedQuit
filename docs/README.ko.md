@@ -85,7 +85,7 @@ RedQuit은 메뉴 막대에 머물며 단 한 가지, 빨간색 닫기 버튼의
 
 ## 설치
 
-1. [릴리스 페이지](https://github.com/Toys-D/RedQuit/releases/latest)에서 `RedQuit-1.0.0.dmg`를 다운로드한 다음 **RedQuit**을 **응용 프로그램** 폴더로 드래그하세요.
+1. [릴리스 페이지](https://github.com/Toys-D/RedQuit/releases/latest)에서 `RedQuit-1.0.1.dmg`를 다운로드한 다음 **RedQuit**을 **응용 프로그램** 폴더로 드래그하세요.
 2. RedQuit을 여세요. RedQuit에는 유료 Apple 인증서가 없기 때문에 처음에는 macOS가 열기를 거부합니다. **시스템 설정 ▸ 개인정보 보호 및 보안**으로 이동하여 아래로 스크롤한 다음 **그래도 열기**를 클릭하세요.
 3. RedQuit이 손쉬운 사용 접근 권한을 요청합니다. **시스템 설정 열기**를 클릭하고 **개인정보 보호 및 보안 ▸ 손쉬운 사용**에서 RedQuit 옆의 스위치를 켜세요. RedQuit이 바로 작동을 시작하며, 다시 시작할 필요가 없습니다.
 4. 선택 사항: RedQuit 설정에서 **로그인 시 열기**를 켜세요.

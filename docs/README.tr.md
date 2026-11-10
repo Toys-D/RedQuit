@@ -85,7 +85,7 @@ Modu menü çubuğundan değiştirin: RedQuit ▸ Mod.
 
 ## Kurulum
 
-1. `RedQuit-1.0.0.dmg` dosyasını [sürümler sayfasından](https://github.com/Toys-D/RedQuit/releases/latest) indirin ve **RedQuit**’i **Uygulamalar** klasörüne sürükleyin.
+1. `RedQuit-1.0.1.dmg` dosyasını [sürümler sayfasından](https://github.com/Toys-D/RedQuit/releases/latest) indirin ve **RedQuit**’i **Uygulamalar** klasörüne sürükleyin.
 2. RedQuit’i açın. Ücretli bir Apple sertifikası olmadığından macOS ilk seferde onu açmayı reddeder. **Sistem Ayarları ▸ Gizlilik ve Güvenlik** bölümüne gidin, aşağı kaydırın ve **Yine de Aç** düğmesini tıklayın.
 3. RedQuit, Erişilebilirlik izni ister. **Sistem Ayarları’nı Aç** düğmesini tıklayın ve **Gizlilik ve Güvenlik ▸ Erişilebilirlik** bölümünde RedQuit’in yanındaki anahtarı açın. RedQuit, yeniden başlatmaya gerek kalmadan hemen çalışmaya başlar.
 4. İsteğe bağlı: RedQuit ayarlarında **Oturum açıldığında aç** seçeneğini açın.

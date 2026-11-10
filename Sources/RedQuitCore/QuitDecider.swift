@@ -20,6 +20,7 @@ public enum QuitDecision: Equatable, Sendable {
 public enum QuitDecider {
     /// - Parameters:
     ///   - closedWindowSubrole: AXSubrole закрытого окна.
+    ///   - closedWindowButtons: жёлтая и зелёная кнопки закрытого окна в момент нажатия.
     ///   - remainingAX: оставшиеся окна программы по данным AX (без закрытого);
     ///     `nil` — AX не ответил.
     ///   - otherWindows: окна, которые видит оконный сервер, но не видит AX
@@ -27,9 +28,15 @@ public enum QuitDecider {
     public static func decide(
         mode: QuitMode,
         closedWindowSubrole: String?,
+        closedWindowButtons: WindowButtons,
         remainingAX: [AXWindowInfo]?,
         otherWindows: [CGWindowRecord]
     ) -> QuitDecision {
+        // Настройки и «О программе» в обоих режимах только закрываются. Главное окно может быть спрятано,
+        // а не закрыто (Launchpad прячет сетку на весь экран), и тогда настройки выглядят последним окном.
+        if closedWindowButtons.isAuxiliary {
+            return .keep(reason: "a settings-type window was closed (\(closedWindowButtons.logDescription)), not a main window")
+        }
         switch mode {
         case .anyWindow:
             if let subrole = closedWindowSubrole, WindowSubrole.floatingPanels.contains(subrole) {

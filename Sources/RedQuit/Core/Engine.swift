@@ -60,7 +60,8 @@ final class Engine {
             return
         }
         let fullScreen = hit.isFullScreen ? ", full screen" : ""
-        Log.click.notice("\"\(hit.appName, privacy: .public)\" [\(hit.bundleID ?? "?", privacy: .public)]: red button pressed (window \(hit.windowSubrole ?? "?", privacy: .public)\(fullScreen, privacy: .public), found via \(hit.windowSource, privacy: .public), id \(hit.windowID.map(String.init) ?? "?", privacy: .public))")
+        let auxiliary = hit.windowButtons.isAuxiliary ? ", settings-type window" : ""
+        Log.click.notice("\"\(hit.appName, privacy: .public)\" [\(hit.bundleID ?? "?", privacy: .public)]: red button pressed (window \(hit.windowSubrole ?? "?", privacy: .public)\(fullScreen, privacy: .public)\(auxiliary, privacy: .public), found via \(hit.windowSource, privacy: .public), id \(hit.windowID.map(String.init) ?? "?", privacy: .public))")
         watcher.mouseDown(on: hit)
     }
 
@@ -137,6 +138,7 @@ final class Engine {
         let decision = QuitDecider.decide(
             mode: mode,
             closedWindowSubrole: hit.windowSubrole,
+            closedWindowButtons: hit.windowButtons,
             remainingAX: remaining,
             otherWindows: others
         )

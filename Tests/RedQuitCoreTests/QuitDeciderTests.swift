@@ -7,6 +7,8 @@ struct QuitDeciderTests {
     let standard = AXWindowInfo(subrole: WindowSubrole.standard, isMinimized: false)
     let minimized = AXWindowInfo(subrole: WindowSubrole.standard, isMinimized: true)
     let dialog = AXWindowInfo(subrole: WindowSubrole.dialog, isMinimized: false)
+    let main = WindowButtons(minimizeEnabled: true, zoomEnabled: true, fullScreenEnabled: true, isFullScreen: false)
+    let settings = WindowButtons(minimizeEnabled: false, zoomEnabled: false, fullScreenEnabled: nil, isFullScreen: false)
     let otherSpaceWindow = CGWindowRecord(
         windowID: 42, ownerPID: 100, layer: 0,
         bounds: CGRect(x: 0, y: 0, width: 800, height: 600), alpha: 1, isOnscreen: false
@@ -16,21 +18,21 @@ struct QuitDeciderTests {
 
     @Test("«Любое окно»: обычное окно → завершаем")
     func anyWindowQuits() {
-        let d = QuitDecider.decide(mode: .anyWindow, closedWindowSubrole: WindowSubrole.standard,
+        let d = QuitDecider.decide(mode: .anyWindow, closedWindowSubrole: WindowSubrole.standard, closedWindowButtons: main,
                                    remainingAX: [standard], otherWindows: [])
         #expect(d.shouldQuit)
     }
 
     @Test("«Любое окно»: плавающая панель → не завершаем")
     func anyWindowIgnoresFloatingPanel() {
-        let d = QuitDecider.decide(mode: .anyWindow, closedWindowSubrole: WindowSubrole.floating,
+        let d = QuitDecider.decide(mode: .anyWindow, closedWindowSubrole: WindowSubrole.floating, closedWindowButtons: main,
                                    remainingAX: [], otherWindows: [])
         #expect(!d.shouldQuit)
     }
 
     @Test("«Любое окно»: системная плавающая панель → не завершаем")
     func anyWindowIgnoresSystemFloatingPanel() {
-        let d = QuitDecider.decide(mode: .anyWindow, closedWindowSubrole: WindowSubrole.systemFloating,
+        let d = QuitDecider.decide(mode: .anyWindow, closedWindowSubrole: WindowSubrole.systemFloating, closedWindowButtons: main,
                                    remainingAX: nil, otherWindows: [])
         #expect(!d.shouldQuit)
     }
@@ -39,14 +41,14 @@ struct QuitDeciderTests {
 
     @Test("«Последнее окно»: осталось обычное окно → не завершаем")
     func lastWindowKeepsWhenStandardRemains() {
-        let d = QuitDecider.decide(mode: .lastWindow, closedWindowSubrole: WindowSubrole.standard,
+        let d = QuitDecider.decide(mode: .lastWindow, closedWindowSubrole: WindowSubrole.standard, closedWindowButtons: main,
                                    remainingAX: [standard], otherWindows: [])
         #expect(!d.shouldQuit)
     }
 
     @Test("«Последнее окно»: осталось только свёрнутое окно → не завершаем")
     func lastWindowKeepsWhenMinimizedRemains() {
-        let d = QuitDecider.decide(mode: .lastWindow, closedWindowSubrole: WindowSubrole.standard,
+        let d = QuitDecider.decide(mode: .lastWindow, closedWindowSubrole: WindowSubrole.standard, closedWindowButtons: main,
                                    remainingAX: [minimized], otherWindows: [])
         #expect(!d.shouldQuit)
         #expect(d.reason.contains("minimized"))
@@ -55,36 +57,53 @@ struct QuitDeciderTests {
     @Test("«Последнее окно»: свёрнутое окно с другой подролью → не завершаем")
     func lastWindowKeepsMinimizedWithOtherSubrole() {
         let oddMinimized = AXWindowInfo(subrole: nil, isMinimized: true)
-        let d = QuitDecider.decide(mode: .lastWindow, closedWindowSubrole: WindowSubrole.standard,
+        let d = QuitDecider.decide(mode: .lastWindow, closedWindowSubrole: WindowSubrole.standard, closedWindowButtons: main,
                                    remainingAX: [oddMinimized], otherWindows: [])
         #expect(!d.shouldQuit)
     }
 
     @Test("«Последнее окно»: окон не осталось → завершаем")
     func lastWindowQuitsWhenNothingRemains() {
-        let d = QuitDecider.decide(mode: .lastWindow, closedWindowSubrole: WindowSubrole.standard,
+        let d = QuitDecider.decide(mode: .lastWindow, closedWindowSubrole: WindowSubrole.standard, closedWindowButtons: main,
                                    remainingAX: [], otherWindows: [])
         #expect(d.shouldQuit)
     }
 
     @Test("«Последнее окно»: остались только диалоги → завершаем (считаются только обычные окна)")
     func lastWindowIgnoresNonStandardRemaining() {
-        let d = QuitDecider.decide(mode: .lastWindow, closedWindowSubrole: WindowSubrole.standard,
+        let d = QuitDecider.decide(mode: .lastWindow, closedWindowSubrole: WindowSubrole.standard, closedWindowButtons: main,
                                    remainingAX: [dialog], otherWindows: [])
         #expect(d.shouldQuit)
     }
 
     @Test("«Последнее окно»: AX не ответил → не завершаем")
     func lastWindowKeepsWhenAXFailed() {
-        let d = QuitDecider.decide(mode: .lastWindow, closedWindowSubrole: WindowSubrole.standard,
+        let d = QuitDecider.decide(mode: .lastWindow, closedWindowSubrole: WindowSubrole.standard, closedWindowButtons: main,
                                    remainingAX: nil, otherWindows: [])
         #expect(!d.shouldQuit)
     }
 
     @Test("«Последнее окно»: AX пуст, но система видит окно на другом рабочем столе → не завершаем")
     func lastWindowKeepsWhenWindowOnOtherSpace() {
-        let d = QuitDecider.decide(mode: .lastWindow, closedWindowSubrole: WindowSubrole.standard,
+        let d = QuitDecider.decide(mode: .lastWindow, closedWindowSubrole: WindowSubrole.standard, closedWindowButtons: main,
                                    remainingAX: [], otherWindows: [otherSpaceWindow])
+        #expect(!d.shouldQuit)
+    }
+
+    // MARK: Окна настроек
+
+    @Test("«Последнее окно»: закрыты настройки, других окон нет (Launchpad со спрятанной сеткой) → не завершаем")
+    func lastWindowKeepsAfterSettingsClosed() {
+        let d = QuitDecider.decide(mode: .lastWindow, closedWindowSubrole: WindowSubrole.standard, closedWindowButtons: settings,
+                                   remainingAX: [], otherWindows: [])
+        #expect(!d.shouldQuit)
+        #expect(d.reason.contains("settings"))
+    }
+
+    @Test("«Любое окно»: закрыты настройки → не завершаем")
+    func anyWindowKeepsAfterSettingsClosed() {
+        let d = QuitDecider.decide(mode: .anyWindow, closedWindowSubrole: WindowSubrole.standard, closedWindowButtons: settings,
+                                   remainingAX: nil, otherWindows: [])
         #expect(!d.shouldQuit)
     }
 }

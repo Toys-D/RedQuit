@@ -1,7 +1,8 @@
 # Changelog
 
-## Unreleased
+## 1.0.1 — 2026-11-10
 
+- Closing a settings window or an About window with the red button no longer quits the app, in both modes. These windows can't be minimized or zoomed, which is how RedQuit tells them from main windows. Fixes apps whose main window hides instead of closing, such as a Launchpad replacement: closing its settings quit the whole app.
 - README: building from source requires Xcode 16 or newer (Swift 6), not Xcode 15.
 
 ## 1.0.0 — 2026-11-07

@@ -32,6 +32,38 @@ public struct AXWindowInfo: Equatable, Sendable {
     public var countsAsOpen: Bool { isStandard || isMinimized }
 }
 
+/// Жёлтая и зелёная кнопки закрываемого окна: `true` — работает, `false` — неактивна,
+/// `nil` — кнопки нет или AX её не отдал.
+public struct WindowButtons: Equatable, Sendable {
+    public var minimizeEnabled: Bool?
+    public var zoomEnabled: Bool?
+    public var fullScreenEnabled: Bool?
+    /// Окно в полноэкранном режиме. Пока его заголовок спрятан, AX отдаёт все кнопки неактивными.
+    public var isFullScreen: Bool
+
+    public init(minimizeEnabled: Bool?, zoomEnabled: Bool?, fullScreenEnabled: Bool?, isFullScreen: Bool) {
+        self.minimizeEnabled = minimizeEnabled
+        self.zoomEnabled = zoomEnabled
+        self.fullScreenEnabled = fullScreenEnabled
+        self.isFullScreen = isFullScreen
+    }
+
+    /// Вспомогательное окно — настройки, «О программе» и подобные: ни свернуть, ни развернуть его нельзя.
+    /// Так их делает macOS (Finder, Safari, TextEdit, Заметки), так же устроены настройки Launchpad.
+    /// У главных окон жёлтая кнопка работает. Настройки на весь экран не разворачиваются,
+    /// поэтому окно в полноэкранном режиме — всегда главное.
+    /// Закрыв вспомогательное окно, человек возвращается к программе, а не выходит из неё.
+    public var isAuxiliary: Bool {
+        !isFullScreen && minimizeEnabled != true && zoomEnabled != true && fullScreenEnabled != true
+    }
+
+    /// Для журнала: «minimize on, zoom off, full screen –».
+    public var logDescription: String {
+        func state(_ value: Bool?) -> String { value.map { $0 ? "on" : "off" } ?? "–" }
+        return "minimize \(state(minimizeEnabled)), zoom \(state(zoomEnabled)), full screen \(state(fullScreenEnabled))"
+    }
+}
+
 /// Окно по данным оконного сервера (`CGWindowListCopyWindowInfo`).
 /// Для этих полей разрешение «Запись экрана» не нужно — оно требуется только для заголовков окон.
 public struct CGWindowRecord: Equatable, Sendable {

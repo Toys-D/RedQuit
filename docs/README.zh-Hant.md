@@ -85,7 +85,7 @@ RedQuit 待在選單列中，只留意一件事：按一下紅色關閉按鈕。
 
 ## 安裝
 
-1. 從[發行頁面](https://github.com/Toys-D/RedQuit/releases/latest)下載 `RedQuit-1.0.0.dmg`，然後將 **RedQuit** 拖移到**應用程式**檔案夾。
+1. 從[發行頁面](https://github.com/Toys-D/RedQuit/releases/latest)下載 `RedQuit-1.0.1.dmg`，然後將 **RedQuit** 拖移到**應用程式**檔案夾。
 2. 打開 RedQuit。由於它沒有付費的 Apple 憑證，第一次打開時 macOS 會拒絕打開它。前往**系統設定 ▸ 隱私權與安全性**，向下捲動並按一下**強制打開**。
 3. RedQuit 會要求「輔助使用」權限。按一下**打開系統設定**，然後在**隱私權與安全性 ▸ 輔助使用**中開啟 RedQuit 旁的開關。RedQuit 會立即開始運作，不需要重新啟動。
 4. 選用：在 RedQuit 的設定中開啟**登入時打開**。

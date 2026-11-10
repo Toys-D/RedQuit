@@ -85,7 +85,7 @@ Mude de modo na barra de menus: RedQuit ▸ Modo.
 
 ## Instalação
 
-1. Baixe `RedQuit-1.0.0.dmg` na [página de versões](https://github.com/Toys-D/RedQuit/releases/latest) e arraste o **RedQuit** para **Aplicativos**.
+1. Baixe `RedQuit-1.0.1.dmg` na [página de versões](https://github.com/Toys-D/RedQuit/releases/latest) e arraste o **RedQuit** para **Aplicativos**.
 2. Abra o RedQuit. Ele não tem um certificado pago da Apple, por isso, na primeira vez, o macOS se recusa a abri-lo. Vá em **Ajustes do Sistema ▸ Privacidade e Segurança**, role para baixo e clique em **Abrir Mesmo Assim**.
 3. O RedQuit pede acesso à Acessibilidade. Clique em **Abrir Ajustes do Sistema** e ative a opção ao lado do RedQuit em **Privacidade e Segurança ▸ Acessibilidade**. O RedQuit começa a funcionar na hora, sem precisar reiniciar.
 4. Opcional: nos ajustes do RedQuit, ative **Abrir no início da sessão**.

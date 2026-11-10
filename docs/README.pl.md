@@ -85,7 +85,7 @@ Tryb zmienisz na pasku menu: RedQuit ▸ Tryb.
 
 ## Instalacja
 
-1. Pobierz `RedQuit-1.0.0.dmg` ze [strony wydań](https://github.com/Toys-D/RedQuit/releases/latest) i przeciągnij **RedQuit** do folderu **Aplikacje**.
+1. Pobierz `RedQuit-1.0.1.dmg` ze [strony wydań](https://github.com/Toys-D/RedQuit/releases/latest) i przeciągnij **RedQuit** do folderu **Aplikacje**.
 2. Otwórz RedQuit. Aplikacja nie ma płatnego certyfikatu Apple, więc za pierwszym razem macOS odmówi jej otwarcia. Otwórz **Ustawienia systemowe ▸ Prywatność i ochrona**, przewiń w dół i kliknij **Otwórz mimo to**.
 3. RedQuit poprosi o uprawnienia dostępności. Kliknij **Otwórz Ustawienia systemowe** i włącz przełącznik obok RedQuit w sekcji **Prywatność i ochrona ▸ Dostępność**. RedQuit od razu zacznie działać, bez ponownego uruchamiania.
 4. Opcjonalnie: w ustawieniach RedQuit włącz **Otwieraj podczas logowania**.

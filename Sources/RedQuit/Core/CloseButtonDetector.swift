@@ -13,6 +13,8 @@ struct CloseButtonHit {
     /// Как найдено окно (для журнала).
     let windowSource: String
     let windowSubrole: String?
+    /// Жёлтая и зелёная кнопки окна: у настроек и «О программе» они неактивны.
+    let windowButtons: WindowButtons
     let windowFrame: CGRect?
     /// Номер окна в оконном сервере, если удалось сопоставить по рамке.
     let windowID: UInt32?
@@ -76,6 +78,7 @@ final class CloseButtonDetector {
         let (window, source) = resolved
 
         let windowFrame = AX.frame(window)
+        let isFullScreen = AX.bool(window, "AXFullScreen") ?? false
         let windowID = windowFrame.flatMap { WindowInventory.windowID(pid: pid, frame: $0) }
 
         return CloseButtonHit(
@@ -87,11 +90,24 @@ final class CloseButtonDetector {
             window: window,
             windowSource: source,
             windowSubrole: AX.string(window, kAXSubroleAttribute),
+            windowButtons: buttons(of: window, isFullScreen: isFullScreen),
             windowFrame: windowFrame,
             windowID: windowID,
-            isFullScreen: AX.bool(window, "AXFullScreen") ?? false,
+            isFullScreen: isFullScreen,
             buttonFrame: AX.frame(element),
             clickPoint: point
+        )
+    }
+
+    private func buttons(of window: AXUIElement, isFullScreen: Bool) -> WindowButtons {
+        func enabled(_ attribute: String) -> Bool? {
+            AX.element(window, attribute).flatMap { AX.bool($0, kAXEnabledAttribute) }
+        }
+        return WindowButtons(
+            minimizeEnabled: enabled(kAXMinimizeButtonAttribute),
+            zoomEnabled: enabled(kAXZoomButtonAttribute),
+            fullScreenEnabled: enabled(kAXFullScreenButtonAttribute),
+            isFullScreen: isFullScreen
         )
     }
 
